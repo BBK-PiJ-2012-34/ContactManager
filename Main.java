@@ -3,6 +3,7 @@ import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Set;
 
 /**
  * Assignment 3 of Programming in Java - Birkbeck, University of London
@@ -28,7 +29,7 @@ public class Main {
             mainRunLoop();
         } catch (IOException e) {
             System.out.println("Input error. Will exit gracefully, saving data...");
-            System.out.println(e);
+            e.printStackTrace();
             cleanup();
         }
     }
@@ -117,6 +118,7 @@ public class Main {
                 addNewContact();
                 break;
             case 'k':
+                listContactsForProvidedIDs();
                 break;
             case 'l':
                 break;
@@ -134,7 +136,7 @@ public class Main {
     }
 
     /**
-     * Gets a name and note for a new contact and creates one using a call to contactManagerImpl.
+     * Prompts user for a name and note for a new contact and creates one using a call to contactManagerImpl.
      */
     private void addNewContact(){
         String name = null;
@@ -151,10 +153,58 @@ public class Main {
             contactManagerImpl.addNewContact(name, note);
         } catch (IOException e){
             System.out.println("Buffered input error!");
-            System.out.println(e);
+            e.printStackTrace();
         } catch (NullPointerException e) {
             System.out.println("Name or note where left null!");
-            System.out.println(e);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Prompts user for contact IDs and prints out those that are found.
+     */
+    private void listContactsForProvidedIDs() {
+        String idList;
+
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+            System.out.print("Enter contact ID ");
+            idList = br.readLine();
+
+            Set<Contact> contactSet = contactManagerImpl.getContacts(1, 2);
+
+            // Print list
+            for (Contact contact : contactSet) {
+                System.out.print("ID: " + contact.getId() + "   Name: " + contact.getName());
+                System.out.print("      Notes: " + contact.getNotes());
+                System.out.println();
+            }
+
+            pause();
+
+        } catch (IOException e){
+            System.out.println("Buffered input error!");
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            System.out.println("ID supplied is invalid!");
+            e.printStackTrace();
+        }
+
+
+    }
+
+    /**
+     * Utility method that pauses display until return is pressed.
+     */
+    private void pause() {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        System.out.print("Press RETURN to continue...");
+        try {
+            br.readLine();
+        } catch (IOException e) {
+            System.out.println("Buffered input error!");
+            e.printStackTrace();
         }
     }
 

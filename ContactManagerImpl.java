@@ -1,8 +1,18 @@
 import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 public class ContactManagerImpl implements ContactManager {
+    private List<Meeting> meetingList = null;
+    private Set<Contact> contactSet = null;
+
+    public ContactManagerImpl() {
+        this.meetingList = new ArrayList<Meeting>();
+        this.contactSet = new HashSet<Contact>();
+    }
+
     /**
      * Add a new meeting to be held in the future.
      *
@@ -126,7 +136,17 @@ public class ContactManagerImpl implements ContactManager {
      * @throws NullPointerException if the name or the notes are null.
      */
     public void addNewContact(String name, String notes) {
-        System.out.println(name + notes);
+        if (name == null | notes == null) {
+            throw new NullPointerException("Contact name or string cannot be null!");
+        }
+
+        // ID for new contact is current contact set size + 1.
+        int contactId = contactSet.size() + 1;
+
+        Contact newContact = new ContactImpl(contactId, name, notes);
+        contactSet.add(newContact);
+
+        System.out.println("Contact added. ID: " + contactId);
     }
 
     /**
@@ -137,7 +157,27 @@ public class ContactManagerImpl implements ContactManager {
      * @throws IllegalArgumentException if any of the IDs does not correspond to a real contact.
      */
     public Set<Contact> getContacts(int... ids) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        // If any of the ids provided is higher than any possible id number for a contact (based on set size)
+        // then throw an exception.
+        int contactSetSize = contactSet.size();
+
+        for (int id : ids) {
+            if (id > contactSetSize) {
+                throw new IllegalArgumentException("ID " + id + " does not exist!");
+            }
+        }
+
+        Set<Contact> tempContactSet = new HashSet<Contact>();
+
+        for (Contact contact : contactSet) {
+            for (int id : ids) {
+                if (contact.getId() == id) {
+                    tempContactSet.add(contact);
+                }
+            }
+        }
+
+        return tempContactSet;
     }
 
     /**
