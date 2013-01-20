@@ -9,14 +9,18 @@ import java.io.IOException;
  * Hisham Khalifa (MSc Computer Science 2012 - 2013, Full-Time)
  */
 public class Main {
+    private ContactManager contactManagerImpl;
 
     public static void main(String[] args) {
-	    Main contactManagerApp = new Main();
+	    Main mainRunLoopManager = new Main();
 
-        contactManagerApp.launch();
+        mainRunLoopManager.launch();
     }
 
     private void launch() {
+        // Instantiate the ContactManager controller object.
+        contactManagerImpl = new ContactManagerImpl();
+
         try {
             // Start our main run loop here.
             mainRunLoop();
@@ -108,6 +112,7 @@ public class Main {
                 break;
 
             case 'j':
+                addNewContact();
                 break;
             case 'k':
                 break;
@@ -123,6 +128,26 @@ public class Main {
             default:
                 System.out.println("Error! Unknown selection.");
                 break;
+        }
+    }
+
+    /**
+     * Gets a name and note for a new contact and creates one using a call to contactManagerImpl.
+     */
+    private void addNewContact(){
+        String name = null;
+        String note = null;
+
+        System.out.print("Enter name for new contact: ");
+        name = System.console().readLine();
+        System.out.print("Enter note for new contact: ");
+        note = System.console().readLine();
+
+        try {
+            contactManagerImpl.addNewContact(name, note);
+        } catch (NullPointerException e){
+            System.out.println("Name or note where left null!");
+            System.out.println(e);
         }
     }
 
