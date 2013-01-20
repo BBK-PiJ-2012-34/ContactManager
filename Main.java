@@ -121,6 +121,7 @@ public class Main {
                 listContactsForProvidedIDs();
                 break;
             case 'l':
+                listContactsHavingStringInName();
                 break;
 
             case 'm':
@@ -169,19 +170,14 @@ public class Main {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
+            //TODO: Input ids as comma separated values.
             System.out.print("Enter contact ID ");
             idList = br.readLine();
 
             Set<Contact> contactSet = contactManagerImpl.getContacts(1, 2);
 
-            // Print list
-            for (Contact contact : contactSet) {
-                System.out.print("ID: " + contact.getId() + "   Name: " + contact.getName());
-                System.out.print("      Notes: " + contact.getNotes());
-                System.out.println();
-            }
-
-            pause();
+            // Print contacts list.
+            printContacts(contactSet);
 
         } catch (IOException e){
             System.out.println("Buffered input error!");
@@ -190,8 +186,47 @@ public class Main {
             System.out.println("ID supplied is invalid!");
             e.printStackTrace();
         }
+    }
 
+    /**
+     * Prompts user for a search string and prints out those contacts whose name contains the string.
+     */
+    private void listContactsHavingStringInName() {
+        String searchString = null;
 
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+            System.out.print("Enter search string for contacts:  ");
+            searchString = br.readLine();
+
+            Set<Contact> contactSet = contactManagerImpl.getContacts(searchString);
+
+            // Print contacts list.
+            printContacts(contactSet);
+
+        } catch (IOException e){
+            System.out.println("Buffered input error!");
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            System.out.println("Search string is null!");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Convenience method that prints given contact list and pauses.
+     *
+     * @param contactSet set of contacts to print.
+     */
+    private void printContacts(Set<Contact> contactSet) {
+        for (Contact contact : contactSet) {
+            System.out.print("ID: " + contact.getId() + "   Name: " + contact.getName());
+            System.out.print("      Notes: " + contact.getNotes());
+            System.out.println();
+        }
+
+        pause();
     }
 
     /**

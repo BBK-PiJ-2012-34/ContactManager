@@ -167,6 +167,7 @@ public class ContactManagerImpl implements ContactManager {
             }
         }
 
+        // Temporary set that holds contacts to return.
         Set<Contact> tempContactSet = new HashSet<Contact>();
 
         for (Contact contact : contactSet) {
@@ -188,7 +189,20 @@ public class ContactManagerImpl implements ContactManager {
      * @throws NullPointerException if the parameter is null.
      */
     public Set<Contact> getContacts(String name) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        if (name == null) {
+            throw new NullPointerException("Search string cannot be null!");
+        }
+
+        // Temporary set that holds contacts to return.
+        Set<Contact> tempContactSet = new HashSet<Contact>();
+
+        for (Contact contact : contactSet) {
+            if (contact.getName().contains(name)) {
+                tempContactSet.add(contact);
+            }
+        }
+
+        return tempContactSet;
     }
 
     /**
