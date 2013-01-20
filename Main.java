@@ -1,6 +1,8 @@
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 /**
  * Assignment 3 of Programming in Java - Birkbeck, University of London
@@ -138,14 +140,19 @@ public class Main {
         String name = null;
         String note = null;
 
-        System.out.print("Enter name for new contact: ");
-        name = System.console().readLine();
-        System.out.print("Enter note for new contact: ");
-        note = System.console().readLine();
-
         try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+            System.out.print("Enter name for new contact: ");
+            name = br.readLine();
+            System.out.print("Enter note for new contact: ");
+            note = br.readLine();
+
             contactManagerImpl.addNewContact(name, note);
-        } catch (NullPointerException e){
+        } catch (IOException e){
+            System.out.println("Buffered input error!");
+            System.out.println(e);
+        } catch (NullPointerException e) {
             System.out.println("Name or note where left null!");
             System.out.println(e);
         }
