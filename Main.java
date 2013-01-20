@@ -21,7 +21,9 @@ public class Main {
             // Start our main run loop here.
             mainRunLoop();
         } catch (IOException e) {
+            System.out.println("Input error. Will exit gracefully, saving data...");
             System.out.println(e);
+            cleanup();
         }
     }
 
@@ -77,25 +79,56 @@ public class Main {
 
             } while ( choice < 'a' | choice > 'm' & choice != 'q');
 
-            if(choice == 'q') {
-                //save data then break
-                cleanup();
-                break;
-            }
-
-            switch (choice) {
-                case 'a':
-                    System.out.println("Adding!");
-                    break;
-                default:
-                    System.out.println("Error! Unknown selection.");
-                    break;
-            }
+            // Run selected choice.
+            doSelectedChoice(choice);
         }
 
     }
 
+    private void doSelectedChoice(char choice) {
+        switch (choice) {
+            case 'a':
+                System.out.println("Adding!");
+                break;
+            case 'b':
+                break;
+            case 'c':
+                break;
+            case 'd':
+                break;
+            case 'e':
+                break;
+            case 'f':
+                break;
+            case 'g':
+                break;
+            case 'h':
+                break;
+            case 'i':
+                break;
+
+            case 'j':
+                break;
+            case 'k':
+                break;
+            case 'l':
+                break;
+
+            case 'm':
+                break;
+            case 'q':
+                cleanup(); // No need for break. System will exit in cleanup().
+
+
+            default:
+                System.out.println("Error! Unknown selection.");
+                break;
+        }
+    }
+
     private void cleanup() {
         //save data
+        System.out.println("Saving data to disk...");
+        System.exit(0);
     }
 }
