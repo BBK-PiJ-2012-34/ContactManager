@@ -59,7 +59,7 @@ public class Main {
 
                 System.out.println("MEETING OPTIONS");
                 System.out.println("---------------");
-                System.out.println("A. Add a new meeting to be held in the future");
+                System.out.println("A. *Add a new meeting to be held in the future");
                 System.out.println("B. Search for a past meeting using a meeting ID");
                 System.out.println("C. Search for a future meeting using a meeting ID");
                 System.out.println("D. Search for a meeting using a meeting ID");
@@ -67,14 +67,14 @@ public class Main {
                 System.out.println("F. List future meetings for a given date");
                 System.out.println("G. List past meetings for a given contact");
                 System.out.println("H. Create a record for a meeting that took place in the past");
-                System.out.println("I. Add notes to a meeting");
+                System.out.println("I. *Add notes to a meeting");
                 System.out.println();
 
                 System.out.println("CONTACT OPTIONS");
                 System.out.println("---------------");
-                System.out.println("J. Add a new contact");
-                System.out.println("K. List contacts for provided IDs");
-                System.out.println("L. Search for contact names");
+                System.out.println("J. *Add a new contact");
+                System.out.println("K. *List contacts for provided IDs");
+                System.out.println("L. *Search for contact names");
                 System.out.println();
 
                 System.out.println("GENERAL OPTIONS");
@@ -119,8 +119,8 @@ public class Main {
             case 'h':
                 break;
             case 'i':
+                addNotesToAMeeting();
                 break;
-
             case 'j':
                 addNewContact();
                 break;
@@ -145,7 +145,7 @@ public class Main {
 
 
     /**
-     * Prompts user for details of a future meeting and adds it using contactManageImpl.
+     * Prompts user for details of a future meeting and adds it.
      */
     private void addNewFutureMeeting() {
         Calendar meetingDate = null;
@@ -161,7 +161,6 @@ public class Main {
             Date date = dateFormatter.parse(userDateInput);
             meetingDate = Calendar.getInstance();
             meetingDate.setTime(date);
-
 
             System.out.print("Enter ID of attendees: ");
             String contactIDs = br.readLine();
@@ -183,7 +182,41 @@ public class Main {
     }
 
     /**
-     * Prompts user for a name and note for a new contact and creates one using a call to contactManagerImpl.
+     * Prompts user for a meeting ID and the note to be added to the meeting.
+     */
+    private void addNotesToAMeeting() {
+        int meetingID = 0;
+        String notes = null;
+
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+            System.out.print("Enter meeting ID to set note for: ");
+            meetingID = Integer.parseInt(br.readLine());
+
+            System.out.print("Enter notes for meeting: ");
+            notes = br.readLine();
+
+            contactManagerImpl.addMeetingNotes(meetingID, notes);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Meeting ID non-existent!");
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            System.out.println("Date is in the future!");
+            e.printStackTrace();
+        } catch (NullPointerException e) {
+            System.out.println("Notes are null!");
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("Buffered input error!");
+            e.printStackTrace();
+        }
+
+
+    }
+
+    /**
+     * Prompts user for a name and note for a new contact and creates one.
      */
     private void addNewContact() {
         String name = null;

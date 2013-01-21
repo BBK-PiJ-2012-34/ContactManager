@@ -75,7 +75,12 @@ public class ContactManagerImpl implements ContactManager {
      * @return the meeting with the requested ID, or null if there is none.
      */
     public Meeting getMeeting(int id) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        for (Meeting aMeeting : meetingList) {
+            if ( aMeeting.getId() == id ) {
+                return aMeeting;
+            }
+        }
+        return null;
     }
 
     /**
@@ -146,7 +151,24 @@ public class ContactManagerImpl implements ContactManager {
      * @throws NullPointerException if the notes are null.
      */
     public void addMeetingNotes(int id, String text) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // Check if meeting exists based on ID.
+        if (! allMeetingsExist(id)) {
+            throw new IllegalArgumentException("Meeting ID does not exist!");
+        }
+
+        // TODO: Check if this upcasting is a 'proper' way of doing it.
+        PastMeetingImpl meeting = (PastMeetingImpl) getMeeting(id);
+
+        // Check if time is valid.
+        if ( timeInFuture(meeting.getDate())) {
+            throw new IllegalStateException("Meeting time is in the future!");
+        }
+
+        if (text == null) {
+            throw new NullPointerException("Notes are null!");
+        }
+
+        meeting.setNotes(text);
     }
 
     /**
@@ -178,6 +200,7 @@ public class ContactManagerImpl implements ContactManager {
      * @throws IllegalArgumentException if any of the IDs does not correspond to a real contact.
      */
     public Set<Contact> getContacts(int... ids) {
+        // Check if all contact IDs supplied are valid.
         if (allContactsExist(ids)) {
             // Temporary set that holds contacts to return.
             Set<Contact> tempContactSet = new HashSet<Contact>();
@@ -228,7 +251,6 @@ public class ContactManagerImpl implements ContactManager {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-
     /**
      * Checks if provided contact IDs exist.
      *
@@ -243,6 +265,26 @@ public class ContactManagerImpl implements ContactManager {
         for (int id : ids) {
             if (id > contactSetSize) {
                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if provided meeting IDs exist.
+     *
+     * @param ids meeting IDs.
+     * @return true if all IDs exist, otherwise false.
+     */
+    private boolean allMeetingsExist(int... ids) {
+        // If any of the ids provided is higher than any possible id number for a meeting (based on list size)
+        // then throw an exception.
+        int meetingListSize = meetingList.size();
+
+        for (int id : ids) {
+            if (id > meetingListSize) {
+                return false;
             }
         }
 
