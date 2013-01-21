@@ -160,7 +160,13 @@ public class ContactManagerImpl implements ContactManager {
      * @return the list of meetings.
      */
     public List<Meeting> getFutureMeetingList(Calendar date) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        // Note that as per Sergio, this interface method should have been named getMeetingList(Calendar date) as
+        // it returns past and future meetings.
+
+
+
+
+        return null;
     }
 
     /**

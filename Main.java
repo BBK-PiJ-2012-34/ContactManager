@@ -40,7 +40,6 @@ public class Main {
     }
 
     private void mainRunLoop() throws IOException{
-
         char choice, ignore;
 
         for(;;) {
