@@ -22,7 +22,28 @@ public class ContactManagerImpl implements ContactManager {
      * @throws IllegalArgumentException if the meeting is set for a time in the past, or if any contact is unknown.
      */
     public int addFutureMeeting(Set<Contact> contacts, Calendar date) {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        // Check if time is valid.
+        if ( ! timeInFuture(date)) {
+            throw new IllegalArgumentException("Meeting time is in the past!");
+        }
+
+        // Check if contacts are valid.
+        for (Contact contact : contacts) {
+            if ( ! allContactsExist(contact.getId())) {
+                throw new IllegalArgumentException("Contact ID supplied does not exist!");
+            }
+        }
+
+        // ID for new meeting is current meeting list size + 1.
+        int meetingId = meetingList.size() + 1;
+
+        // Create meeting.
+        FutureMeeting futureMeeting = new FutureMeetingImpl(meetingId, date, contacts);
+
+        // Add meeting to meeting list.
+        this.meetingList.add(futureMeeting);
+
+        return meetingId;
     }
 
     /**
@@ -104,8 +125,8 @@ public class ContactManagerImpl implements ContactManager {
      * @param contacts a list of participants.
      * @param date     the date on which the meeting took place.
      * @param text     messages to be added about the meeting.
-     * @throws IllegalArgumentException if the list of contacts is empty, or any of the contact5s does not exist.
-     * @throws NullPointerException     if any of the arguments is null.
+     * @throws IllegalArgumentException if the list of contacts is empty, or any of the contacts does not exist.
+     * @throws NullPointerException if any of the arguments is null.
      */
     public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) {
         //To change body of implemented methods use File | Settings | File Templates.
@@ -121,8 +142,8 @@ public class ContactManagerImpl implements ContactManager {
      * @param id   the ID of the meeting.
      * @param text messages to be added about the meetings.
      * @throws IllegalArgumentException if the meeting does not exist.
-     * @throws IllegalStateException    if the meeting is set for a date in the future.
-     * @throws NullPointerException     if the notes are null.
+     * @throws IllegalStateException if the meeting is set for a date in the future.
+     * @throws NullPointerException if the notes are null.
      */
     public void addMeetingNotes(int id, String text) {
         //To change body of implemented methods use File | Settings | File Templates.
@@ -157,28 +178,21 @@ public class ContactManagerImpl implements ContactManager {
      * @throws IllegalArgumentException if any of the IDs does not correspond to a real contact.
      */
     public Set<Contact> getContacts(int... ids) {
-        // If any of the ids provided is higher than any possible id number for a contact (based on set size)
-        // then throw an exception.
-        int contactSetSize = contactSet.size();
+        if (allContactsExist(ids)) {
+            // Temporary set that holds contacts to return.
+            Set<Contact> tempContactSet = new HashSet<Contact>();
 
-        for (int id : ids) {
-            if (id > contactSetSize) {
-                throw new IllegalArgumentException("ID " + id + " does not exist!");
-            }
-        }
-
-        // Temporary set that holds contacts to return.
-        Set<Contact> tempContactSet = new HashSet<Contact>();
-
-        for (Contact contact : contactSet) {
-            for (int id : ids) {
-                if (contact.getId() == id) {
-                    tempContactSet.add(contact);
+            for (Contact contact : contactSet) {
+                for (int id : ids) {
+                    if (contact.getId() == id) {
+                        tempContactSet.add(contact);
+                    }
                 }
             }
+            return tempContactSet;
+        } else {
+            throw new IllegalArgumentException("Not all IDs supplied exist!");
         }
-
-        return tempContactSet;
     }
 
     /**
@@ -212,5 +226,42 @@ public class ContactManagerImpl implements ContactManager {
      */
     public void flush() {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+
+    /**
+     * Checks if provided contact IDs exist.
+     *
+     * @param ids contact IDs.
+     * @return true if all IDs exist, otherwise false.
+     */
+    private boolean allContactsExist(int... ids) {
+        // If any of the ids provided is higher than any possible id number for a contact (based on set size)
+        // then throw an exception.
+        int contactSetSize = contactSet.size();
+
+        for (int id : ids) {
+            if (id > contactSetSize) {
+               return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if provided date is in the future.
+     *
+     * @param date date to check.
+     * @return true if the date is in the future, otherwise false.
+     */
+    private boolean timeInFuture(Calendar date) {
+        Calendar rightNow = Calendar.getInstance();
+
+        if (rightNow.before(date)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -1,8 +1,13 @@
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
+import sun.tools.jstat.ParserException;
 
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Set;
 
 /**
@@ -12,6 +17,8 @@ import java.util.Set;
  * Hisham Khalifa (MSc Computer Science 2012 - 2013, Full-Time)
  */
 public class Main {
+    public static final String DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";
+
     private ContactManager contactManagerImpl;
 
     public static void main(String[] args) {
@@ -95,7 +102,7 @@ public class Main {
     private void doSelectedChoice(char choice) {
         switch (choice) {
             case 'a':
-                System.out.println("Adding!");
+                addNewFutureMeeting();
                 break;
             case 'b':
                 break;
@@ -136,10 +143,49 @@ public class Main {
         }
     }
 
+
+    /**
+     * Prompts user for details of a future meeting and adds it using contactManageImpl.
+     */
+    private void addNewFutureMeeting() {
+        Calendar meetingDate = null;
+        Set<Contact> attendees = null;
+
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+            System.out.print("Enter date for future meeting (yyyy/MM/dd HH:mm:ss): ");
+            String userDateInput = br.readLine();
+
+            SimpleDateFormat dateFormatter = new SimpleDateFormat( DATE_FORMAT );
+            Date date = dateFormatter.parse(userDateInput);
+            meetingDate = Calendar.getInstance();
+            meetingDate.setTime(date);
+
+
+            System.out.print("Enter ID of attendees: ");
+            String contactIDs = br.readLine();
+            // TODO: Get comma separated list of contact IDs.
+            attendees = contactManagerImpl.getContacts(1, 2);
+
+            contactManagerImpl.addFutureMeeting(attendees, meetingDate);
+
+        } catch (ParseException e) {
+            System.out.println("Date format incorrect! New meeting action terminated.");
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            System.out.println("Date supplied or contact IDs are invalid.");
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("Buffered input error!");
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Prompts user for a name and note for a new contact and creates one using a call to contactManagerImpl.
      */
-    private void addNewContact(){
+    private void addNewContact() {
         String name = null;
         String note = null;
 
