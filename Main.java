@@ -138,7 +138,6 @@ public class Main {
             case 'q':
                 cleanup(); // No need for break. System will exit in cleanup().
 
-
             default:
                 System.out.println("Error! Unknown selection.");
                 break;

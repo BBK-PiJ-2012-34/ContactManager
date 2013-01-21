@@ -53,7 +53,7 @@ public interface ContactManager {
      * @return the list of the future meeting(s) scheduled with this contact (maybe empty).
      * @throws IllegalArgumentException if the contact does not exist.
      */
-    List<Meeting> getFutureMeetingList(ContactManager contact);
+    List<Meeting> getFutureMeetingList(Contact contact);
 
     /**
      * Returns the list of meetings that are scheduled for, or that took place on, the specified date.
@@ -76,7 +76,7 @@ public interface ContactManager {
      * @return the list of future meeting(s) scheduled with this contact (maybe empty).
      * @throws IllegalArgumentException if the contact does not exist.
      */
-    List<PastMeeting> getPastMeetingList(ContactManager contact);
+    List<PastMeeting> getPastMeetingList(Contact contact);
 
     /**
      * Create a new record for a meeting that took place in the past.

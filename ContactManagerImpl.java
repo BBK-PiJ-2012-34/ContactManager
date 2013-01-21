@@ -117,7 +117,7 @@ public class ContactManagerImpl implements ContactManager {
      * @return the list of the future meeting(s) scheduled with this contact (maybe empty).
      * @throws IllegalArgumentException if the contact does not exist.
      */
-    public List<Meeting> getFutureMeetingList(ContactManager contact) {
+    public List<Meeting> getFutureMeetingList(Contact contact) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -144,7 +144,7 @@ public class ContactManagerImpl implements ContactManager {
      * @return the list of future meeting(s) scheduled with this contact (maybe empty).
      * @throws IllegalArgumentException if the contact does not exist.
      */
-    public List<PastMeeting> getPastMeetingList(ContactManager contact) {
+    public List<PastMeeting> getPastMeetingList(Contact contact) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
