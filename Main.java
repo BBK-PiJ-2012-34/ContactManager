@@ -58,7 +58,7 @@ public class Main {
                 System.out.println("MEETING OPTIONS");
                 System.out.println("---------------");
                 System.out.println("A. *Add a new meeting to be held in the future");
-                System.out.println("B. Search for a past meeting using a meeting ID");
+                System.out.println("B. *Search for a past meeting using a meeting ID");
                 System.out.println("C. *Search for a future meeting using a meeting ID");
                 System.out.println("D. *Search for a meeting using a meeting ID");
                 System.out.println("E. List future meetings for a given contact");
@@ -103,6 +103,7 @@ public class Main {
                 addNewFutureMeeting();
                 break;
             case 'b':
+                searchPastMeetingUsingID();
                 break;
             case 'c':
                 searchFutureMeetingUsingID();
@@ -141,6 +142,28 @@ public class Main {
             default:
                 System.out.println("Error! Unknown selection.");
                 break;
+        }
+    }
+
+    /**
+     * Prompts user for past meeting ID and prints its details.
+     */
+    private void searchPastMeetingUsingID() {
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            System.out.print("Enter past meeting ID to display details: ");
+            int meetingID = Integer.parseInt(br.readLine());
+
+            Meeting meeting = contactManagerImpl.getPastMeeting(meetingID);
+            if (meeting != null) {
+                printMeetings(new ArrayList<Meeting>(Arrays.asList(meeting)));
+            } else {
+                System.out.println("Meeting not found.");
+            }
+
+        } catch (IOException e) {
+            System.out.println("Buffered input error!");
+            e.printStackTrace();
         }
     }
 

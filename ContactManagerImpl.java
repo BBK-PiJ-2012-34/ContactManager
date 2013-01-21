@@ -54,7 +54,19 @@ public class ContactManagerImpl implements ContactManager {
      * @throws IllegalArgumentException if there is a meeting with that ID happening in the future.
      */
     public PastMeeting getPastMeeting(int id) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        // Check if meeting exists based on ID.
+        if (! allMeetingsExist(id)) {
+            return null;
+        }
+
+        Meeting meeting = getMeeting(id);
+
+        // Check if meeting is a future type.
+        if (meeting instanceof FutureMeetingImpl) {
+            throw new IllegalArgumentException("Meeting time is in the future!");
+        }
+
+        return (PastMeeting)meeting;
     }
 
     /**
@@ -72,7 +84,7 @@ public class ContactManagerImpl implements ContactManager {
 
         Meeting meeting = getMeeting(id);
 
-        // Check if meeting is not a future type.
+        // Check if meeting is a past type.
         if (meeting instanceof PastMeetingImpl) {
             throw new IllegalArgumentException("Meeting time is in the past!");
         }
