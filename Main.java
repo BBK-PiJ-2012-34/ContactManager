@@ -61,7 +61,7 @@ public class Main {
                 System.out.println("B. *Search for a past meeting using a meeting ID");
                 System.out.println("C. *Search for a future meeting using a meeting ID");
                 System.out.println("D. *Search for a meeting using a meeting ID");
-                System.out.println("E. List future meetings for a given contact");
+                System.out.println("E. *List future meetings for a given contact");
                 System.out.println("F. List future meetings for a given date");
                 System.out.println("G. List past meetings for a given contact");
                 System.out.println("H. *Create a record for a meeting that took place in the past");
@@ -112,6 +112,7 @@ public class Main {
                 searchMeetingUsingID();
                 break;
             case 'e':
+                listFutureMeetingsWithContact();
                 break;
             case 'f':
                 break;
@@ -202,6 +203,34 @@ public class Main {
                 printMeetings(new ArrayList<Meeting>(Arrays.asList(meeting)));
             }
 
+        } catch (IOException e) {
+            System.out.println("Buffered input error!");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Prompts user for contact ID and prints all future meetings with contact attending.
+     */
+    private void listFutureMeetingsWithContact() {
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            System.out.print("Enter contact ID to display future meetings with contact attending: ");
+            int contactID = Integer.parseInt(br.readLine());
+
+            // Use the ContactManager interface method of getContacts to get our one contact in a set.
+            Set<Contact> attendee = null;
+            attendee = contactManagerImpl.getContacts(contactID); // Will have one contact only.
+            List<Meeting> meetings = contactManagerImpl.getFutureMeetingList(attendee.iterator().next());
+
+            if (meetings != null) {
+                printMeetings(meetings);
+            } else {
+                System.out.println("No future meetings scheduled with contact.");
+            }
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("Contact ID does not exist!");
         } catch (IOException e) {
             System.out.println("Buffered input error!");
             e.printStackTrace();

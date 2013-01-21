@@ -99,7 +99,7 @@ public class ContactManagerImpl implements ContactManager {
      * @return the meeting with the requested ID, or null if there is none.
      */
     public Meeting getMeeting(int id) {
-        for (Meeting aMeeting : meetingList) {
+        for (Meeting aMeeting : this.meetingList) {
             if ( aMeeting.getId() == id ) {
                 return aMeeting;
             }
@@ -118,7 +118,21 @@ public class ContactManagerImpl implements ContactManager {
      * @throws IllegalArgumentException if the contact does not exist.
      */
     public List<Meeting> getFutureMeetingList(Contact contact) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        if ( ! allContactsExist(contact.getId())) {
+            throw new IllegalArgumentException("Contact ID supplied does not exist!");
+        }
+
+        List<Meeting> futureMeetings = new ArrayList<Meeting>();
+        for (Meeting meeting : this.meetingList) {
+            Set<Contact> contacts = meeting.getContacts();
+            if (contacts.contains(contact)) {
+                futureMeetings.add(meeting);
+            }
+        }
+
+        // TODO: Sort chronologically.
+
+        return futureMeetings;
     }
 
     /**
@@ -233,10 +247,10 @@ public class ContactManagerImpl implements ContactManager {
         }
 
         // ID for new contact is current contact set size + 1.
-        int contactId = contactSet.size() + 1;
+        int contactId = this.contactSet.size() + 1;
 
         Contact newContact = new ContactImpl(contactId, name, notes);
-        contactSet.add(newContact);
+        this.contactSet.add(newContact);
 
         System.out.println("Contact added. ID: " + contactId);
     }
@@ -254,7 +268,7 @@ public class ContactManagerImpl implements ContactManager {
             // Temporary set that holds contacts to return.
             Set<Contact> tempContactSet = new HashSet<Contact>();
 
-            for (Contact contact : contactSet) {
+            for (Contact contact : this.contactSet) {
                 for (int id : ids) {
                     if (contact.getId() == id) {
                         tempContactSet.add(contact);
@@ -282,7 +296,7 @@ public class ContactManagerImpl implements ContactManager {
         // Temporary set that holds contacts to return.
         Set<Contact> tempContactSet = new HashSet<Contact>();
 
-        for (Contact contact : contactSet) {
+        for (Contact contact : this.contactSet) {
             if (contact.getName().contains(name)) {
                 tempContactSet.add(contact);
             }
@@ -298,6 +312,24 @@ public class ContactManagerImpl implements ContactManager {
      */
     public void flush() {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+
+
+
+    /**
+     * Returns a single contact that corresponds to the ID.
+     *
+     * @param id a contact ID.
+     * @return a Contact that corresponds to the ID or null if not found.
+     */
+    private Contact getContact(int id) {
+        for (Contact contact : this.contactSet) {
+            if (contact.getId() == id) {
+                return contact;
+            }
+        }
+        return null;
     }
 
     /**
