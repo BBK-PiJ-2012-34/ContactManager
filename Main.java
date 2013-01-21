@@ -63,7 +63,7 @@ public class Main {
                 System.out.println("D. *Search for a meeting using a meeting ID");
                 System.out.println("E. *List future meetings for a given contact");
                 System.out.println("F. List future meetings for a given date");
-                System.out.println("G. List past meetings for a given contact");
+                System.out.println("G. *List past meetings for a given contact");
                 System.out.println("H. *Create a record for a meeting that took place in the past");
                 System.out.println("I. *Add notes to a meeting");
                 System.out.println();
@@ -117,6 +117,7 @@ public class Main {
             case 'f':
                 break;
             case 'g':
+                listPastMeetingsWithContact();
                 break;
             case 'h':
                 createRecordForPastMeeting();
@@ -154,9 +155,9 @@ public class Main {
             System.out.print("Enter past meeting ID to display details: ");
             int meetingID = Integer.parseInt(br.readLine());
 
-            Meeting meeting = contactManagerImpl.getPastMeeting(meetingID);
+            PastMeeting meeting = contactManagerImpl.getPastMeeting(meetingID);
             if (meeting != null) {
-                printMeetings(new ArrayList<Meeting>(Arrays.asList(meeting)));
+                printPastMeetings(new ArrayList<PastMeeting>(Arrays.asList(meeting)));
             } else {
                 System.out.println("Meeting not found.");
             }
@@ -227,6 +228,34 @@ public class Main {
                 printMeetings(meetings);
             } else {
                 System.out.println("No future meetings scheduled with contact.");
+            }
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("Contact ID does not exist!");
+        } catch (IOException e) {
+            System.out.println("Buffered input error!");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Prompts user for contact ID and prints all past meetings with contact having attended.
+     */
+    private void listPastMeetingsWithContact() {
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            System.out.print("Enter contact ID to display past meetings with contact: ");
+            int contactID = Integer.parseInt(br.readLine());
+
+            // Use the ContactManager interface method of getContacts to get our one contact in a set.
+            Set<Contact> attendee = null;
+            attendee = contactManagerImpl.getContacts(contactID); // Will have one contact only.
+            List<PastMeeting> meetings = contactManagerImpl.getPastMeetingList(attendee.iterator().next());
+
+            if (meetings != null) {
+                printPastMeetings(meetings);
+            } else {
+                System.out.println("No past meetings occurred with contact.");
             }
 
         } catch (IllegalArgumentException e) {
@@ -448,9 +477,31 @@ public class Main {
      * @param meetingList set of meetings to print.
      */
     private void printMeetings(List<Meeting> meetingList) {
+        System.out.println("Future Meetings");
+        System.out.println("---------------");
         for (Meeting meeting : meetingList) {
             // TODO: Format date output.
             System.out.print("ID: " + meeting.getId() + "   Date: " + meeting.getDate());
+            // Print notes in case it's a past meeting
+            System.out.println();
+        }
+
+        pause();
+    }
+
+    /**
+     * Convenience method that prints given past meeting list and pauses.
+     *
+     * @param meetingList set of past meetings to print.
+     */
+    private void printPastMeetings(List<PastMeeting> meetingList) {
+        System.out.println("Past Meetings");
+        System.out.println("---------------");
+        for (Meeting meeting : meetingList) {
+            // TODO: Format date output.
+            System.out.print("ID: " + meeting.getId() + "   Date: " + meeting.getDate());
+            // Print notes since it's a past meeting.
+            System.out.println("    Notes: " + ((PastMeetingImpl) meeting).getNotes());
             System.out.println();
         }
 

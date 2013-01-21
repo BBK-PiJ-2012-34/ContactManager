@@ -5,11 +5,22 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class ContactManagerImpl implements ContactManager {
+    // Fields for future and past meetings
     private List<Meeting> meetingList = null;
+
+    // TODO: Use this?
+    private List<FutureMeeting> futureMeetingList = null;
+    private List<PastMeeting> pastMeetingList = null;
+
     private Set<Contact> contactSet = null;
 
     public ContactManagerImpl() {
         this.meetingList = new ArrayList<Meeting>();
+
+        // TODO: Use this?
+        this.futureMeetingList = new ArrayList<FutureMeeting>();
+        this.pastMeetingList = new ArrayList<PastMeeting>();
+
         this.contactSet = new HashSet<Contact>();
     }
 
@@ -66,6 +77,7 @@ public class ContactManagerImpl implements ContactManager {
             throw new IllegalArgumentException("Meeting time is in the future!");
         }
 
+        // Downcast to PastMeeting.
         return (PastMeeting)meeting;
     }
 
@@ -89,6 +101,7 @@ public class ContactManagerImpl implements ContactManager {
             throw new IllegalArgumentException("Meeting time is in the past!");
         }
 
+        // Downcast to FutureMeeting
         return (FutureMeeting)meeting;
     }
 
@@ -124,9 +137,11 @@ public class ContactManagerImpl implements ContactManager {
 
         List<Meeting> futureMeetings = new ArrayList<Meeting>();
         for (Meeting meeting : this.meetingList) {
-            Set<Contact> contacts = meeting.getContacts();
-            if (contacts.contains(contact)) {
-                futureMeetings.add(meeting);
+            if (meeting instanceof FutureMeetingImpl) {
+                Set<Contact> contacts = meeting.getContacts();
+                if (contacts.contains(contact)) {
+                    futureMeetings.add(meeting);
+                }
             }
         }
 
@@ -155,11 +170,29 @@ public class ContactManagerImpl implements ContactManager {
      * not contain any duplicates.
      *
      * @param contact one of the user's contacts.
-     * @return the list of future meeting(s) scheduled with this contact (maybe empty).
+     * @return the list of past meeting(s) scheduled with this contact (maybe empty).
      * @throws IllegalArgumentException if the contact does not exist.
      */
     public List<PastMeeting> getPastMeetingList(Contact contact) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        if ( ! allContactsExist(contact.getId())) {
+            throw new IllegalArgumentException("Contact ID supplied does not exist!");
+        }
+
+        // Note: For some reason interface requires return type to be a List<PastMeeting>
+        // while for the similar method for future meetings, it only requires a List<Meeting> return type.
+        List<PastMeeting> pastMeetings = new ArrayList<PastMeeting>();
+        for (Meeting meeting : this.meetingList) {
+            if (meeting instanceof PastMeetingImpl) {
+                Set<Contact> contacts = meeting.getContacts();
+                if (contacts.contains(contact)) {
+                    pastMeetings.add((PastMeeting)meeting);
+                }
+            }
+        }
+
+        // TODO: Sort chronologically.
+
+        return pastMeetings;
     }
 
     /**
@@ -344,7 +377,7 @@ public class ContactManagerImpl implements ContactManager {
         int contactSetSize = contactSet.size();
 
         for (int id : ids) {
-            if (id > contactSetSize) {
+            if (id > contactSetSize + 1) {
                return false;
             }
         }
@@ -364,7 +397,7 @@ public class ContactManagerImpl implements ContactManager {
         int meetingListSize = meetingList.size();
 
         for (int id : ids) {
-            if (id > meetingListSize) {
+            if (id > meetingListSize + 1) {
                 return false;
             }
         }
