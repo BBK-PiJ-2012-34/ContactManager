@@ -66,7 +66,7 @@ public class Main {
                 System.out.println("E. List future meetings for a given contact");
                 System.out.println("F. List future meetings for a given date");
                 System.out.println("G. List past meetings for a given contact");
-                System.out.println("H. Create a record for a meeting that took place in the past");
+                System.out.println("H. *Create a record for a meeting that took place in the past");
                 System.out.println("I. *Add notes to a meeting");
                 System.out.println();
 
@@ -117,6 +117,7 @@ public class Main {
             case 'g':
                 break;
             case 'h':
+                createRecordForPastMeeting();
                 break;
             case 'i':
                 addNotesToAMeeting();
@@ -182,6 +183,47 @@ public class Main {
     }
 
     /**
+     * Prompts user for details of a past meeting and adds it.
+     */
+    private void createRecordForPastMeeting() {
+        Calendar meetingDate = null;
+        Set<Contact> attendees = null;
+        String notes = null;
+
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+            System.out.print("Enter date of past meeting (yyyy/MM/dd HH:mm:ss): ");
+            String userDateInput = br.readLine();
+
+            SimpleDateFormat dateFormatter = new SimpleDateFormat( DATE_FORMAT );
+            Date date = dateFormatter.parse(userDateInput);
+            meetingDate = Calendar.getInstance();
+            meetingDate.setTime(date);
+
+            System.out.print("Enter ID of attendees for past meeting: ");
+            String contactIDs = br.readLine();
+            // TODO: Get comma separated list of contact IDs.
+            attendees = contactManagerImpl.getContacts(1, 2);
+
+            System.out.print("Enter notes for past meeting: ");
+            notes = br.readLine();
+
+            contactManagerImpl.addNewPastMeeting(attendees, meetingDate, notes);
+
+        } catch (ParseException e) {
+            System.out.println("Date format incorrect! New meeting action terminated.");
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            System.out.println("Date supplied or contact IDs are invalid.");
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("Buffered input error!");
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Prompts user for a meeting ID and the note to be added to the meeting.
      */
     private void addNotesToAMeeting() {
@@ -198,6 +240,7 @@ public class Main {
             notes = br.readLine();
 
             contactManagerImpl.addMeetingNotes(meetingID, notes);
+
         } catch (IllegalArgumentException e) {
             System.out.println("Meeting ID non-existent!");
             e.printStackTrace();
@@ -211,8 +254,6 @@ public class Main {
             System.out.println("Buffered input error!");
             e.printStackTrace();
         }
-
-
     }
 
     /**
@@ -231,6 +272,7 @@ public class Main {
             note = br.readLine();
 
             contactManagerImpl.addNewContact(name, note);
+
         } catch (IOException e){
             System.out.println("Buffered input error!");
             e.printStackTrace();

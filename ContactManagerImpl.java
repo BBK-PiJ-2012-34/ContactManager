@@ -134,7 +134,30 @@ public class ContactManagerImpl implements ContactManager {
      * @throws NullPointerException if any of the arguments is null.
      */
     public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // Check if time is valid.
+        if ( timeInFuture(date)) {
+            throw new IllegalArgumentException("Meeting time is in the future!");
+        }
+
+        // Check if contacts are valid.
+        for (Contact contact : contacts) {
+            if ( ! allContactsExist(contact.getId())) {
+                throw new IllegalArgumentException("Contact ID supplied does not exist!");
+            }
+        }
+
+        if (contacts == null | date == null | text == null) {
+            throw new NullPointerException("Data supplied is null.");
+        }
+
+        // ID for past meeting is current meeting list size + 1.
+        int meetingId = meetingList.size() + 1;
+
+        // Create past meeting.
+        PastMeeting pastMeeting = new PastMeetingImpl(meetingId, date, contacts, text);
+
+        // Add past meeting to meeting list.
+        this.meetingList.add(pastMeeting);
     }
 
     /**
@@ -156,7 +179,7 @@ public class ContactManagerImpl implements ContactManager {
             throw new IllegalArgumentException("Meeting ID does not exist!");
         }
 
-        // TODO: Check if this upcasting is a 'proper' way of doing it.
+        // TODO: Check if this downcasting is a 'proper' way of doing it.
         PastMeetingImpl meeting = (PastMeetingImpl) getMeeting(id);
 
         // Check if time is valid.
