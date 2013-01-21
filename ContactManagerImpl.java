@@ -179,11 +179,10 @@ public class ContactManagerImpl implements ContactManager {
             throw new IllegalArgumentException("Meeting ID does not exist!");
         }
 
-        // TODO: Check if this downcasting is a 'proper' way of doing it.
-        PastMeetingImpl meeting = (PastMeetingImpl) getMeeting(id);
+        Meeting meeting = getMeeting(id);
 
-        // Check if time is valid.
-        if ( timeInFuture(meeting.getDate())) {
+        // Check if meeting is not a future type.
+        if (meeting instanceof FutureMeetingImpl) {
             throw new IllegalStateException("Meeting time is in the future!");
         }
 
@@ -191,7 +190,10 @@ public class ContactManagerImpl implements ContactManager {
             throw new NullPointerException("Notes are null!");
         }
 
-        meeting.setNotes(text);
+        // TODO: Check if this downcasting is a 'proper' way of doing it.
+        PastMeetingImpl pastMeeting = (PastMeetingImpl) getMeeting(id);
+
+        pastMeeting.setNotes(text);
     }
 
     /**

@@ -6,9 +6,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Assignment 3 of Programming in Java - Birkbeck, University of London
@@ -62,7 +60,7 @@ public class Main {
                 System.out.println("A. *Add a new meeting to be held in the future");
                 System.out.println("B. Search for a past meeting using a meeting ID");
                 System.out.println("C. Search for a future meeting using a meeting ID");
-                System.out.println("D. Search for a meeting using a meeting ID");
+                System.out.println("D. *Search for a meeting using a meeting ID");
                 System.out.println("E. List future meetings for a given contact");
                 System.out.println("F. List future meetings for a given date");
                 System.out.println("G. List past meetings for a given contact");
@@ -109,6 +107,7 @@ public class Main {
             case 'c':
                 break;
             case 'd':
+                searchMeetingUsingID();
                 break;
             case 'e':
                 break;
@@ -144,6 +143,25 @@ public class Main {
         }
     }
 
+    /**
+     * Prompts user for meeting ID and prints its details.
+     */
+    private void searchMeetingUsingID() {
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            System.out.print("Enter meeting ID to display details: ");
+            int meetingID = Integer.parseInt(br.readLine());
+
+            Meeting meeting = contactManagerImpl.getMeeting(meetingID);
+            if (meeting != null) {
+                printMeetings(new ArrayList<Meeting>(Arrays.asList(meeting)));
+            }
+
+        } catch (IOException e) {
+            System.out.println("Buffered input error!");
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Prompts user for details of a future meeting and adds it.
@@ -336,7 +354,7 @@ public class Main {
     }
 
     /**
-     * Convenience method that prints given contact list and pauses.
+     * Convenience method that prints given contact set and pauses.
      *
      * @param contactSet set of contacts to print.
      */
@@ -344,6 +362,21 @@ public class Main {
         for (Contact contact : contactSet) {
             System.out.print("ID: " + contact.getId() + "   Name: " + contact.getName());
             System.out.print("      Notes: " + contact.getNotes());
+            System.out.println();
+        }
+
+        pause();
+    }
+
+    /**
+     * Convenience method that prints given meeting list and pauses.
+     *
+     * @param meetingList set of meetings to print.
+     */
+    private void printMeetings(List<Meeting> meetingList) {
+        for (Meeting meeting : meetingList) {
+            // TODO: Format date output.
+            System.out.print("ID: " + meeting.getId() + "   Date: " + meeting.getDate());
             System.out.println();
         }
 
