@@ -330,6 +330,7 @@ public class Main {
 
     /**
      * Prompts user for meeting ID and prints its details.
+     * Calls ContactManagerImpl getMeeting(int id).
      */
     private void searchMeetingUsingID() {
         try {
@@ -350,6 +351,7 @@ public class Main {
 
     /**
      * Prompts user for contact ID and prints all future meetings with contact attending.
+     * Calls ContactManagerImpl getFutureMeetingList(Contact contact).
      */
     private void listFutureMeetingsWithContact() {
         try {
@@ -359,8 +361,11 @@ public class Main {
 
             // Use the ContactManager interface method of getContacts to get our one contact in a set.
             Set<Contact> attendee = null;
-            attendee = contactManagerImpl.getContacts(contactID); // Will have one contact only.
-            List<Meeting> meetings = contactManagerImpl.getFutureMeetingList(attendee.iterator().next());
+            // Will have one contact only.
+            attendee = contactManagerImpl.getContacts(contactID);
+            // Get the one and only contact from the set.
+            Contact contact = attendee.iterator().next();
+            List<Meeting> meetings = contactManagerImpl.getFutureMeetingList(contact);
 
             if (meetings != null) {
                 printMeetings(meetings);
@@ -369,7 +374,7 @@ public class Main {
             }
 
         } catch (IllegalArgumentException e) {
-            System.out.println("Contact ID does not exist!");
+            e.printStackTrace();
         } catch (IOException e) {
             System.out.println("Buffered input error!");
             e.printStackTrace();
@@ -377,7 +382,8 @@ public class Main {
     }
 
     /**
-     * Prompts user for a date and prints all meetings on that day.
+     * Prompts user for a date and prints all meetings on that day (whether past or future).
+     * Calls ContactManagerImpl getFutureMeetingList(Calendar date).
      */
     private void listMeetingsOnDate() {
         Calendar searchDate = null;
@@ -405,7 +411,6 @@ public class Main {
             System.out.println("Date format incorrect! New meeting action terminated.");
             e.printStackTrace();
         } catch (IllegalArgumentException e) {
-            System.out.println("Date supplied or contact IDs are invalid.");
             e.printStackTrace();
         } catch (IOException e) {
             System.out.println("Buffered input error!");
@@ -415,6 +420,7 @@ public class Main {
 
     /**
      * Prompts user for contact ID and prints all past meetings with contact having attended.
+     * Calls ContactManagerImpl getPastMeetingList(Contact contact).
      */
     private void listPastMeetingsWithContact() {
         try {
@@ -434,7 +440,7 @@ public class Main {
             }
 
         } catch (IllegalArgumentException e) {
-            System.out.println("Contact ID does not exist!");
+            e.printStackTrace();
         } catch (IOException e) {
             System.out.println("Buffered input error!");
             e.printStackTrace();
@@ -443,6 +449,7 @@ public class Main {
 
     /**
      * Prompts user for details of a past meeting and adds it.
+     * Calls ContactManagerImpl addNewPastMeeting(Set<Contact> contacts, Calendar date, String text).
      */
     private void createRecordForPastMeeting() {
         Calendar meetingDate = null;
@@ -474,7 +481,6 @@ public class Main {
             System.out.println("Date format incorrect! New meeting action terminated.");
             e.printStackTrace();
         } catch (IllegalArgumentException e) {
-            System.out.println("Date supplied or contact IDs are invalid.");
             e.printStackTrace();
         } catch (IOException e) {
             System.out.println("Buffered input error!");
@@ -484,6 +490,7 @@ public class Main {
 
     /**
      * Prompts user for a meeting ID and the note to be added to the meeting.
+     * Calls ContactManagerImpl addMeetingNotes(int id, String text).
      */
     private void addNotesToAMeeting() {
         int meetingID = 0;
@@ -501,13 +508,10 @@ public class Main {
             contactManagerImpl.addMeetingNotes(meetingID, notes);
 
         } catch (IllegalArgumentException e) {
-            System.out.println("Meeting ID non-existent!");
             e.printStackTrace();
         } catch (IllegalStateException e) {
-            System.out.println("Date is in the future!");
             e.printStackTrace();
         } catch (NullPointerException e) {
-            System.out.println("Notes are null!");
             e.printStackTrace();
         } catch (IOException e) {
             System.out.println("Buffered input error!");
