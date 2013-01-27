@@ -1,10 +1,10 @@
-import java.util.Calendar;
-import java.util.List;
-import java.util.Set;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.io.*;
+import java.util.*;
 
 public class ContactManagerImpl implements ContactManager {
+    // Delimiter for CSV file format.
+    public static final String DELIMITER = "&";
+
     private List<Meeting> meetingList = null;
     private Set<Contact> contactSet = null;
 
@@ -13,6 +13,9 @@ public class ContactManagerImpl implements ContactManager {
         // and the Set interface as a HashSet.
         this.meetingList = new ArrayList<Meeting>();
         this.contactSet = new HashSet<Contact>();
+
+        // Load data if available.
+        loadContactsSetAsCSV();
     }
 
     /**
@@ -395,18 +398,18 @@ public class ContactManagerImpl implements ContactManager {
             }
         }
 
-        // Note: Interface does not specify an exception for a null result, so we just
+        // NOTE: Interface does not specify an exception for a null result, so we just
         // return an empty list in case there are no matches.
         return tempContactSet;
     }
 
     /**
      * Save all data to disk.
-     * <p/>
+     *
      * This method must be executed when the program is closed and when/if the user requests it.
      */
     public void flush() {
-        //To change body of implemented methods use File | Settings | File Templates.
+        saveContactsSetAsCSV();
     }
 
 
@@ -519,5 +522,71 @@ public class ContactManagerImpl implements ContactManager {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Sorts provided meeting list from oldest to newest.
+     *
+     * @param meetings list to sort.
+     * @return sorted meeting list.
+     */
+    private List<Meeting> chronologicallySortMeetingList(List<Meeting> meetings) {
+        List<Meeting> sortedList = new ArrayList<Meeting>();
+
+        return sortedList;
+    }
+
+    /**
+     * Saves contacts to CSV text file.
+     */
+    private void saveContactsSetAsCSV() {
+        File file = new File("contacts.txt");
+        PrintWriter out = null;
+        try {
+            out = new PrintWriter(file);
+            for (Contact contact : contactSet) {
+                String contactLine;
+                contactLine = contact.getId() + DELIMITER + contact.getName() + DELIMITER + contact.getNotes();
+                out.println(contactLine);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+        }
+    }
+
+    /**
+     * Loads contacts from CSV text file.
+     */
+    private void loadContactsSetAsCSV() {
+        File file = new File("contacts.txt");
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(file));
+            String line;
+
+            while ((line = in.readLine()) != null) {
+                // Split line using delimiter.
+                String[] tokens = line.split(DELIMITER);
+                if (tokens.length == 3) {
+                    // Get contact attributes.
+                    int tempID = Integer.parseInt(tokens[0]);
+                    String tempName = tokens[1];
+                    String tempNotes = tokens[2];
+
+                    // Create contact object using loaded attributes.
+                    Contact recreatedContact = new ContactImpl(tempID, tempName, tempNotes);
+                    // Add contact to contact list.
+                    this.contactSet.add(recreatedContact);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("contacts.txt file does not exist.");
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

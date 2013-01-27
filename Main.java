@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * Assignment 3 of Programming in Java - Birkbeck, University of London
  * Main class that manages and runs the contact manager application.
- * <p/>
+ *
  * Hisham Khalifa (MSc Computer Science 2012 - 2013, Full-Time)
  */
 public class Main {
@@ -133,6 +133,7 @@ public class Main {
                 break;
 
             case 'm':
+                contactManagerImpl.flush();
                 break;
             case 'n':
                 break;
@@ -525,6 +526,12 @@ public class Main {
      * @param contactSet set of contacts to print.
      */
     private void printContacts(Set<Contact> contactSet) {
+        if (contactSet.isEmpty()) {
+            System.out.println("No contacts found.");
+            pause();
+            return;
+        }
+
         for (Contact contact : contactSet) {
             System.out.print("ID: " + contact.getId() + "   Name: " + contact.getName());
             System.out.print("      Notes: " + contact.getNotes());
@@ -540,6 +547,12 @@ public class Main {
      * @param meetingList set of meetings to print.
      */
     private void printMeetings(List<Meeting> meetingList) {
+        if (meetingList.isEmpty()) {
+            System.out.println("No meetings found.");
+            pause();
+            return;
+        }
+
         System.out.println("Future Meetings");
         System.out.println("---------------");
         for (Meeting meeting : meetingList) {
@@ -558,6 +571,12 @@ public class Main {
      * @param meetingList set of past meetings to print.
      */
     private void printPastMeetings(List<PastMeeting> meetingList) {
+        if (meetingList.isEmpty()) {
+            System.out.println("No meetings found.");
+            pause();
+            return;
+        }
+
         System.out.println("Past Meetings");
         System.out.println("---------------");
         for (Meeting meeting : meetingList) {
