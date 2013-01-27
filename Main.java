@@ -16,6 +16,7 @@ import java.util.*;
  */
 public class Main {
     public static final String DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";
+    public static final String DATE_FORMAT_NO_TIME = "yyyy/MM/dd";
 
     private ContactManager contactManagerImpl;
 
@@ -61,7 +62,7 @@ public class Main {
                 System.out.println("C. *Search for a future meeting using a meeting ID");
                 System.out.println("D. *Search for a meeting using a meeting ID");
                 System.out.println("E. *List future meetings for a given contact");
-                System.out.println("F. List future meetings for a given date");
+                System.out.println("F. *List past and future meetings for a given date");
                 System.out.println("G. *List past meetings for a given contact");
                 System.out.println("H. *Create a record for a meeting that took place in the past");
                 System.out.println("I. *Add notes to a meeting");
@@ -114,6 +115,7 @@ public class Main {
                 listFutureMeetingsWithContact();
                 break;
             case 'f':
+                listMeetingsOnDate();
                 break;
             case 'g':
                 listPastMeetingsWithContact();
@@ -231,6 +233,43 @@ public class Main {
 
         } catch (IllegalArgumentException e) {
             System.out.println("Contact ID does not exist!");
+        } catch (IOException e) {
+            System.out.println("Buffered input error!");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Prompts user for a date and prints all meetings on that day.
+     */
+    private void listMeetingsOnDate() {
+        Calendar searchDate = null;
+
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+            System.out.print("Enter date to list meetings on (yyyy/MM/dd): ");
+            String userDateInput = br.readLine();
+
+            SimpleDateFormat dateFormatter = new SimpleDateFormat( DATE_FORMAT_NO_TIME );
+            Date date = dateFormatter.parse(userDateInput);
+            searchDate = Calendar.getInstance();
+            searchDate.setTime(date);
+
+            List<Meeting> meetings = contactManagerImpl.getFutureMeetingList(searchDate);
+
+            if (meetings != null) {
+                printMeetings(meetings);
+            } else {
+                System.out.println("No meetings found for provided date!");
+            }
+
+        } catch (ParseException e) {
+            System.out.println("Date format incorrect! New meeting action terminated.");
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            System.out.println("Date supplied or contact IDs are invalid.");
+            e.printStackTrace();
         } catch (IOException e) {
             System.out.println("Buffered input error!");
             e.printStackTrace();

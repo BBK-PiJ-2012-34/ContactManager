@@ -163,10 +163,17 @@ public class ContactManagerImpl implements ContactManager {
         // Note that as per Sergio, this interface method should have been named getMeetingList(Calendar date) as
         // it returns past and future meetings.
 
+        List<Meeting> pastAndFutureMeetings = new ArrayList<Meeting>();
+        for (Meeting meeting : this.meetingList) {
+            Calendar meetingDate = meeting.getDate();
+                 if (calendarsEqual(meetingDate, date)) {
+                    pastAndFutureMeetings.add(meeting);
+                 }
+        }
 
+        // TODO: Sort chronologically.
 
-
-        return null;
+        return pastAndFutureMeetings;
     }
 
     /**
@@ -426,4 +433,22 @@ public class ContactManagerImpl implements ContactManager {
             return false;
         }
     }
+
+    /**
+     * Compares if two Calendars have equal date (not time) portions.
+     *
+     * @param calendarFirst first calendar to compare.
+     * @param calendarSecond second calendar to compare.
+     * @return true if the dates have equal date portions, otherwise false.
+     */
+     private boolean calendarsEqual(Calendar calendarFirst, Calendar calendarSecond) {
+         if (calendarFirst.get(Calendar.YEAR) != calendarSecond.get(Calendar.YEAR)){
+           return false;
+         } else if (calendarFirst.get(Calendar.MONTH) != calendarSecond.get(Calendar.MONTH)) {
+            return false;
+         } else if (calendarFirst.get(Calendar.DAY_OF_MONTH) != calendarSecond.get(Calendar.DAY_OF_MONTH)) {
+            return false;
+         }
+         return true;
+     }
 }
