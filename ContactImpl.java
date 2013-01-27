@@ -1,4 +1,11 @@
-
+/**
+ * ContactImpl - Implements Contact interface
+ *
+ * A contact is a person we are making business with or may do in the future.
+ *
+ * Contacts have an ID (unique), a name (probably unique, but maybe not), and notes that the user may want to save about
+ * them.
+ */
 public class ContactImpl implements Contact {
     private int id = 0;
     private String name = "";
@@ -51,15 +58,9 @@ public class ContactImpl implements Contact {
      * @param note the notes to be added.
      */
     public void addNotes(String note) {
-        setNotes(note);
+        // Each note is added on a separate line.
+        String concatenatedNotes = getNotes() + "\n" + note;
+        this.notes = concatenatedNotes;
     }
 
-    /**
-     * Set notes about the contact.
-     *
-     * @param notes the notes to be added.
-     */
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
 }

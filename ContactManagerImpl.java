@@ -5,22 +5,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class ContactManagerImpl implements ContactManager {
-    // Fields for future and past meetings
     private List<Meeting> meetingList = null;
-
-    // TODO: Use this?
-    private List<FutureMeeting> futureMeetingList = null;
-    private List<PastMeeting> pastMeetingList = null;
-
     private Set<Contact> contactSet = null;
 
     public ContactManagerImpl() {
+        // We're implementing the List interface as ArrayList
+        // and the Set interface as a HashSet.
         this.meetingList = new ArrayList<Meeting>();
-
-        // TODO: Use this?
-        this.futureMeetingList = new ArrayList<FutureMeeting>();
-        this.pastMeetingList = new ArrayList<PastMeeting>();
-
         this.contactSet = new HashSet<Contact>();
     }
 
@@ -28,24 +19,26 @@ public class ContactManagerImpl implements ContactManager {
      * Add a new meeting to be held in the future.
      *
      * @param contacts a list of contacts that will participate in the meeting.
-     * @param date     the date on which the meeting will take place.
+     * @param date the date on which the meeting will take place.
      * @return the ID for the meeting.
      * @throws IllegalArgumentException if the meeting is set for a time in the past, or if any contact is unknown.
      */
+    @Override
     public int addFutureMeeting(Set<Contact> contacts, Calendar date) {
-        // Check if time is valid.
-        if ( ! timeInFuture(date)) {
-            throw new IllegalArgumentException("Meeting time is in the past!");
+        // Exception thrown if time is in the past.
+        if (!timeInFuture(date)) {
+            throw new IllegalArgumentException("Meeting time is in the past.");
         }
 
-        // Check if contacts are valid.
+        // Exception thrown if at least one ID doesn't exist.
         for (Contact contact : contacts) {
-            if ( ! allContactsExist(contact.getId())) {
-                throw new IllegalArgumentException("Contact ID supplied does not exist!");
+            int id = contact.getId();
+            if (!allContactsExist(id)) {
+                throw new IllegalArgumentException("Contact ID supplied does not exist.");
             }
         }
 
-        // ID for new meeting is current meeting list size + 1.
+        // ID given to new meeting is current meeting list size + 1.
         int meetingId = meetingList.size() + 1;
 
         // Create meeting.
@@ -64,21 +57,25 @@ public class ContactManagerImpl implements ContactManager {
      * @return the meeting with the requested ID, or null if there is none.
      * @throws IllegalArgumentException if there is a meeting with that ID happening in the future.
      */
+    @Override
     public PastMeeting getPastMeeting(int id) {
         // Check if meeting exists based on ID.
-        if (! allMeetingsExist(id)) {
+        if (!allMeetingsExist(id)) {
             return null;
         }
 
         Meeting meeting = getMeeting(id);
 
-        // Check if meeting is a future type.
-        if (meeting instanceof FutureMeetingImpl) {
-            throw new IllegalArgumentException("Meeting time is in the future!");
+        // Paranoid null check.
+        if (meeting != null) {
+            // Throw exception if meeting is of the FutureMeetingImpl type.
+            if (meeting instanceof FutureMeetingImpl) {
+                throw new IllegalArgumentException("Meeting time is in the future.");
+            }
         }
 
-        // Downcast to PastMeeting.
-        return (PastMeeting)meeting;
+        // Downcast to PastMeeting before returning.
+        return (PastMeeting) meeting;
     }
 
     /**
@@ -90,19 +87,22 @@ public class ContactManagerImpl implements ContactManager {
      */
     public FutureMeeting getFutureMeeting(int id) {
         // Check if meeting exists based on ID.
-        if (! allMeetingsExist(id)) {
+        if (!allMeetingsExist(id)) {
             return null;
         }
 
         Meeting meeting = getMeeting(id);
 
-        // Check if meeting is a past type.
-        if (meeting instanceof PastMeetingImpl) {
-            throw new IllegalArgumentException("Meeting time is in the past!");
+        // Paranoid null check.
+        if (meeting != null) {
+            // Throw exception if meeting is of the PastMeetingImpl type.
+            if (meeting instanceof PastMeetingImpl) {
+                throw new IllegalArgumentException("Meeting time is in the past.");
+            }
         }
 
-        // Downcast to FutureMeeting
-        return (FutureMeeting)meeting;
+        // Downcast to FutureMeeting before returning.
+        return (FutureMeeting) meeting;
     }
 
     /**
@@ -111,9 +111,10 @@ public class ContactManagerImpl implements ContactManager {
      * @param id the ID for the meeting.
      * @return the meeting with the requested ID, or null if there is none.
      */
+    @Override
     public Meeting getMeeting(int id) {
         for (Meeting aMeeting : this.meetingList) {
-            if ( aMeeting.getId() == id ) {
+            if (aMeeting.getId() == id) {
                 return aMeeting;
             }
         }
@@ -122,7 +123,7 @@ public class ContactManagerImpl implements ContactManager {
 
     /**
      * Returns the list of future meetings scheduled with this contact.
-     *
+     * <p/>
      * If there are none, the returned list will be empty. Otherwise, the list will be chronologically sorted and will
      * not contain any duplicates.
      *
@@ -131,8 +132,8 @@ public class ContactManagerImpl implements ContactManager {
      * @throws IllegalArgumentException if the contact does not exist.
      */
     public List<Meeting> getFutureMeetingList(Contact contact) {
-        if ( ! allContactsExist(contact.getId())) {
-            throw new IllegalArgumentException("Contact ID supplied does not exist!");
+        if (!allContactsExist(contact.getId())) {
+            throw new IllegalArgumentException("Contact ID supplied does not exist.");
         }
 
         List<Meeting> futureMeetings = new ArrayList<Meeting>();
@@ -152,7 +153,7 @@ public class ContactManagerImpl implements ContactManager {
 
     /**
      * Returns the list of meetings that are scheduled for, or that took place on, the specified date.
-     *
+     * <p/>
      * If there are none, the returned list will be empty. Otherwise, the list will be chronologically sorted and will
      * not contain any duplicates.
      *
@@ -166,9 +167,9 @@ public class ContactManagerImpl implements ContactManager {
         List<Meeting> pastAndFutureMeetings = new ArrayList<Meeting>();
         for (Meeting meeting : this.meetingList) {
             Calendar meetingDate = meeting.getDate();
-                 if (calendarsEqual(meetingDate, date)) {
-                    pastAndFutureMeetings.add(meeting);
-                 }
+            if (calendarsEqual(meetingDate, date)) {
+                pastAndFutureMeetings.add(meeting);
+            }
         }
 
         // TODO: Sort chronologically.
@@ -178,7 +179,7 @@ public class ContactManagerImpl implements ContactManager {
 
     /**
      * Returns the list of past meeting in which this contact has participated.
-     *
+     * <p/>
      * If there are none, the returned list will be empty. Otherwise, the list will be chronologically sorted and will
      * not contain any duplicates.
      *
@@ -187,8 +188,8 @@ public class ContactManagerImpl implements ContactManager {
      * @throws IllegalArgumentException if the contact does not exist.
      */
     public List<PastMeeting> getPastMeetingList(Contact contact) {
-        if ( ! allContactsExist(contact.getId())) {
-            throw new IllegalArgumentException("Contact ID supplied does not exist!");
+        if (!allContactsExist(contact.getId())) {
+            throw new IllegalArgumentException("Contact ID supplied does not exist.");
         }
 
         // Note: For some reason interface requires return type to be a List<PastMeeting>
@@ -198,7 +199,7 @@ public class ContactManagerImpl implements ContactManager {
             if (meeting instanceof PastMeetingImpl) {
                 Set<Contact> contacts = meeting.getContacts();
                 if (contacts.contains(contact)) {
-                    pastMeetings.add((PastMeeting)meeting);
+                    pastMeetings.add((PastMeeting) meeting);
                 }
             }
         }
@@ -215,18 +216,18 @@ public class ContactManagerImpl implements ContactManager {
      * @param date     the date on which the meeting took place.
      * @param text     messages to be added about the meeting.
      * @throws IllegalArgumentException if the list of contacts is empty, or any of the contacts does not exist.
-     * @throws NullPointerException if any of the arguments is null.
+     * @throws NullPointerException     if any of the arguments is null.
      */
     public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text) {
         // Check if time is valid.
-        if ( timeInFuture(date)) {
-            throw new IllegalArgumentException("Meeting time is in the future!");
+        if (timeInFuture(date)) {
+            throw new IllegalArgumentException("Meeting time is in the future.");
         }
 
         // Check if contacts are valid.
         for (Contact contact : contacts) {
-            if ( ! allContactsExist(contact.getId())) {
-                throw new IllegalArgumentException("Contact ID supplied does not exist!");
+            if (!allContactsExist(contact.getId())) {
+                throw new IllegalArgumentException("Contact ID supplied does not exist.");
             }
         }
 
@@ -246,32 +247,32 @@ public class ContactManagerImpl implements ContactManager {
 
     /**
      * Add notes to a meeting.
-     *
+     * <p/>
      * This method is used when a future meeting takes place, and is then converted to a past meeting (with notes).
-     *
+     * <p/>
      * It can be also used to add notes to a past meeting at a later date.
      *
      * @param id   the ID of the meeting.
      * @param text messages to be added about the meetings.
      * @throws IllegalArgumentException if the meeting does not exist.
-     * @throws IllegalStateException if the meeting is set for a date in the future.
-     * @throws NullPointerException if the notes are null.
+     * @throws IllegalStateException    if the meeting is set for a date in the future.
+     * @throws NullPointerException     if the notes are null.
      */
     public void addMeetingNotes(int id, String text) {
         // Check if meeting exists based on ID.
-        if (! allMeetingsExist(id)) {
-            throw new IllegalArgumentException("Meeting ID does not exist!");
+        if (!allMeetingsExist(id)) {
+            throw new IllegalArgumentException("Meeting ID does not exist.");
         }
 
         Meeting meeting = getMeeting(id);
 
         // Check if meeting is not a future type.
         if (meeting instanceof FutureMeetingImpl) {
-            throw new IllegalStateException("Meeting time is in the future!");
+            throw new IllegalStateException("Meeting time is in the future.");
         }
 
         if (text == null) {
-            throw new NullPointerException("Notes are null!");
+            throw new NullPointerException("Notes are null.");
         }
 
         // TODO: Check if this downcasting is a 'proper' way of doing it.
@@ -283,13 +284,15 @@ public class ContactManagerImpl implements ContactManager {
     /**
      * Create a new contact with the specified name and notes.
      *
-     * @param name  the name of the contact.
+     * @param name the name of the contact.
      * @param notes notes to be added about the contact.
      * @throws NullPointerException if the name or the notes are null.
      */
+    @Override
     public void addNewContact(String name, String notes) {
-        if (name == null | notes == null) {
-            throw new NullPointerException("Contact name or string cannot be null!");
+        // Exception thrown if name or notes are null.
+        if (name == null || notes == null) {
+            throw new NullPointerException("Contact name or string cannot be null.");
         }
 
         // ID for new contact is current contact set size + 1.
@@ -297,8 +300,6 @@ public class ContactManagerImpl implements ContactManager {
 
         Contact newContact = new ContactImpl(contactId, name, notes);
         this.contactSet.add(newContact);
-
-        System.out.println("Contact added. ID: " + contactId);
     }
 
     /**
@@ -308,6 +309,7 @@ public class ContactManagerImpl implements ContactManager {
      * @return a list containing the contacts that correspond to the IDs.
      * @throws IllegalArgumentException if any of the IDs does not correspond to a real contact.
      */
+    @Override
     public Set<Contact> getContacts(int... ids) {
         // Check if all contact IDs supplied are valid.
         if (allContactsExist(ids)) {
@@ -323,7 +325,8 @@ public class ContactManagerImpl implements ContactManager {
             }
             return tempContactSet;
         } else {
-            throw new IllegalArgumentException("Not all IDs supplied exist!");
+            // Exception thrown if at least one ID doesn't exist.
+            throw new IllegalArgumentException("Not all IDs supplied exist.");
         }
     }
 
@@ -335,8 +338,9 @@ public class ContactManagerImpl implements ContactManager {
      * @throws NullPointerException if the parameter is null.
      */
     public Set<Contact> getContacts(String name) {
+        // Exception thrown if name parameter is null.
         if (name == null) {
-            throw new NullPointerException("Search string cannot be null!");
+            throw new NullPointerException("Search string cannot be null.");
         }
 
         // Temporary set that holds contacts to return.
@@ -348,12 +352,14 @@ public class ContactManagerImpl implements ContactManager {
             }
         }
 
+        // Note: Interface does not specify an exception for a null result, so we just
+        // return an empty list in case there are no matches.
         return tempContactSet;
     }
 
     /**
      * Save all data to disk.
-     *
+     * <p/>
      * This method must be executed when the program is closed and when/if the user requests it.
      */
     public void flush() {
@@ -361,7 +367,7 @@ public class ContactManagerImpl implements ContactManager {
     }
 
 
-
+    // Private utility methods start here.
 
     /**
      * Returns a single contact that corresponds to the ID.
@@ -385,16 +391,26 @@ public class ContactManagerImpl implements ContactManager {
      * @return true if all IDs exist, otherwise false.
      */
     private boolean allContactsExist(int... ids) {
-        // If any of the ids provided is higher than any possible id number for a contact (based on set size)
-        // then throw an exception.
-        int contactSetSize = contactSet.size();
-
+        // Check each ID to see if present in contacts.
         for (int id : ids) {
-            if (id > contactSetSize + 1) {
-               return false;
+            // Flag set to true when an id is found.
+            boolean foundFlag = false;
+
+            // Check to see if current ID is present in any of the contacts.
+            // If found, set foundFlag to true.
+            for (Contact contact : contactSet) {
+                if (id == contact.getId()) {
+                    foundFlag = true;
+                }
+            }
+
+            if (foundFlag == false) {
+                // No need to check other IDs. If one is not found, return false.
+                return false;
             }
         }
 
+        // All IDs found, so return true.
         return true;
     }
 
@@ -405,16 +421,26 @@ public class ContactManagerImpl implements ContactManager {
      * @return true if all IDs exist, otherwise false.
      */
     private boolean allMeetingsExist(int... ids) {
-        // If any of the ids provided is higher than any possible id number for a meeting (based on list size)
-        // then throw an exception.
-        int meetingListSize = meetingList.size();
+        // Check each ID to see if present in meetings.
+        for (int id: ids) {
+            // Flag set to true when an id is found.
+            boolean foundFlag = false;
 
-        for (int id : ids) {
-            if (id > meetingListSize + 1) {
+            // Check to see if current ID is present in any of the meetings.
+            // If found, set foundFlag to true.
+            for (Meeting meeting : meetingList) {
+                if (id == meeting.getId()) {
+                    foundFlag = true;
+                }
+            }
+
+            if (foundFlag == false) {
+                // No need to check other IDs. If one is not found, return false.
                 return false;
             }
         }
 
+        // All IDs found, so return true.
         return true;
     }
 
@@ -437,18 +463,18 @@ public class ContactManagerImpl implements ContactManager {
     /**
      * Compares if two Calendars have equal date (not time) portions.
      *
-     * @param calendarFirst first calendar to compare.
+     * @param calendarFirst  first calendar to compare.
      * @param calendarSecond second calendar to compare.
      * @return true if the dates have equal date portions, otherwise false.
      */
-     private boolean calendarsEqual(Calendar calendarFirst, Calendar calendarSecond) {
-         if (calendarFirst.get(Calendar.YEAR) != calendarSecond.get(Calendar.YEAR)){
-           return false;
-         } else if (calendarFirst.get(Calendar.MONTH) != calendarSecond.get(Calendar.MONTH)) {
+    private boolean calendarsEqual(Calendar calendarFirst, Calendar calendarSecond) {
+        if (calendarFirst.get(Calendar.YEAR) != calendarSecond.get(Calendar.YEAR)) {
             return false;
-         } else if (calendarFirst.get(Calendar.DAY_OF_MONTH) != calendarSecond.get(Calendar.DAY_OF_MONTH)) {
+        } else if (calendarFirst.get(Calendar.MONTH) != calendarSecond.get(Calendar.MONTH)) {
             return false;
-         }
-         return true;
-     }
+        } else if (calendarFirst.get(Calendar.DAY_OF_MONTH) != calendarSecond.get(Calendar.DAY_OF_MONTH)) {
+            return false;
+        }
+        return true;
+    }
 }

@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * Assignment 3 of Programming in Java - Birkbeck, University of London
  * Main class that manages and runs the contact manager application.
- *
+ * <p/>
  * Hisham Khalifa (MSc Computer Science 2012 - 2013, Full-Time)
  */
 public class Main {
@@ -21,7 +21,7 @@ public class Main {
     private ContactManager contactManagerImpl;
 
     public static void main(String[] args) {
-	    Main mainRunLoopManager = new Main();
+        Main mainRunLoopManager = new Main();
 
         mainRunLoopManager.launch();
     }
@@ -40,23 +40,25 @@ public class Main {
         }
     }
 
-    private void mainRunLoop() throws IOException{
+    private void mainRunLoop() throws IOException {
         char choice, ignore;
 
-        for(;;) {
+        for (; ; ) {
             do {
                 System.out.println("*************************");
                 System.out.println("*****CONTACT MANAGER*****");
                 System.out.println("*************************");
                 System.out.println();
 
-                System.out.println("-------------------------");
-                System.out.println("|      Select Option    |");
-                System.out.println("-------------------------");
+                System.out.println("TEST CONTACT OPTIONS");
+                System.out.println("--------------------");
+                System.out.println("J. *Add a new contact");
+                System.out.println("K. *List contacts for provided IDs");
+                System.out.println("L. *Search for contact names");
                 System.out.println();
 
-                System.out.println("MEETING OPTIONS");
-                System.out.println("---------------");
+                System.out.println("TEST MEETING OPTIONS");
+                System.out.println("--------------------");
                 System.out.println("A. *Add a new meeting to be held in the future");
                 System.out.println("B. *Search for a past meeting using a meeting ID");
                 System.out.println("C. *Search for a future meeting using a meeting ID");
@@ -68,16 +70,10 @@ public class Main {
                 System.out.println("I. *Add notes to a meeting");
                 System.out.println();
 
-                System.out.println("CONTACT OPTIONS");
-                System.out.println("---------------");
-                System.out.println("J. *Add a new contact");
-                System.out.println("K. *List contacts for provided IDs");
-                System.out.println("L. *Search for contact names");
-                System.out.println();
-
-                System.out.println("GENERAL OPTIONS");
-                System.out.println("---------------");
+                System.out.println("TEST GENERAL OPTIONS");
+                System.out.println("--------------------");
                 System.out.println("M. Save all data to disk");
+                System.out.println("N. Load all data from disk");
                 System.out.println("Q. Quit program");
 
                 choice = (char) System.in.read();
@@ -87,9 +83,9 @@ public class Main {
                 // Eat up extraneous new line characters to avoid messing up input on some consoles.
                 do {
                     ignore = (char) System.in.read();
-                } while(ignore != '\n');
+                } while (ignore != '\n');
 
-            } while ( choice < 'a' | choice > 'm' & choice != 'q');
+            } while (choice < 'a' | choice > 'm' & choice != 'q');
 
             // Run selected choice.
             doSelectedChoice(choice);
@@ -138,6 +134,8 @@ public class Main {
 
             case 'm':
                 break;
+            case 'n':
+                break;
             case 'q':
                 cleanup(); // No need for break. System will exit in cleanup().
 
@@ -148,7 +146,141 @@ public class Main {
     }
 
     /**
+     * Prompts user for a name and note for a new contact and creates one.
+     * Calls ContactManagerImpl addNewContact(String name, String notes).
+     */
+    private void addNewContact() {
+        String name = null;
+        String note = null;
+
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+            System.out.print("Enter name for new contact: ");
+            name = br.readLine();
+
+            // Idiom to make it null if nothing is entered.
+            if (name.length() == 0) {
+                name = null;
+            }
+
+            System.out.print("Enter note for new contact: ");
+            note = br.readLine();
+
+            // Idiom to make it null if nothing is entered.
+            if (note.length() == 0) {
+                note = null;
+            }
+
+            contactManagerImpl.addNewContact(name, note);
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("Buffered input error!");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Prompts user for contact IDs and prints out those that are found.
+     * Calls ContactManagerImpl getContacts(int... ids).
+     */
+    private void listContactsForProvidedIDs() {
+        String idList;
+
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+            //TODO: Input ids as comma separated values.
+            System.out.print("Enter contact ID ");
+            idList = br.readLine();
+
+            Set<Contact> contactSet = contactManagerImpl.getContacts(1, 2);
+
+            // Print contacts list.
+            printContacts(contactSet);
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("ID supplied is invalid!");
+            e.printStackTrace();
+        }  catch (IOException e) {
+            System.out.println("Buffered input error!");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Prompts user for a search string and prints out those contacts whose name contains the string.
+     * Calls ContactManagerImpl getContacts(String name).
+     */
+    private void listContactsHavingStringInName() {
+        String searchString = null;
+
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+            System.out.print("Enter search string for contacts:  ");
+            searchString = br.readLine();
+
+            // Idiom to set empty entry to null.
+            if (searchString.length() == 0) {
+                searchString = null;
+            }
+
+            Set<Contact> contactSet = contactManagerImpl.getContacts(searchString);
+
+            // Print contacts list.
+            printContacts(contactSet);
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("Buffered input error!");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Prompts user for details of a future meeting and adds it.
+     * Calls ContactManagerImpl addFutureMeeting(Set<Contact> contacts, Calendar date).
+     */
+    private void addNewFutureMeeting() {
+        Calendar meetingDate = null;
+        Set<Contact> attendees = null;
+
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+            System.out.print("Enter date for future meeting (yyyy/MM/dd HH:mm:ss): ");
+            String userDateInput = br.readLine();
+
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
+            Date date = dateFormatter.parse(userDateInput);
+            meetingDate = Calendar.getInstance();
+            meetingDate.setTime(date);
+
+            System.out.print("Enter ID of attendees: ");
+            String contactIDs = br.readLine();
+            // TODO: Get comma separated list of contact IDs.
+            attendees = contactManagerImpl.getContacts(1, 2);
+
+            contactManagerImpl.addFutureMeeting(attendees, meetingDate);
+
+        } catch (ParseException e) {
+            System.out.println("Date format incorrect. New meeting action terminated.");
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("Buffered input error!");
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Prompts user for past meeting ID and prints its details.
+     * Calls ContactManagerImpl getPastMeeting(int id).
      */
     private void searchPastMeetingUsingID() {
         try {
@@ -163,6 +295,8 @@ public class Main {
                 System.out.println("Meeting not found.");
             }
 
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             System.out.println("Buffered input error!");
             e.printStackTrace();
@@ -171,6 +305,7 @@ public class Main {
 
     /**
      * Prompts user for future meeting ID and prints its details.
+     * Calls ContactManagerImpl getFutureMeeting(int id).
      */
     private void searchFutureMeetingUsingID() {
         try {
@@ -185,6 +320,8 @@ public class Main {
                 System.out.println("Meeting not found.");
             }
 
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             System.out.println("Buffered input error!");
             e.printStackTrace();
@@ -251,7 +388,7 @@ public class Main {
             System.out.print("Enter date to list meetings on (yyyy/MM/dd): ");
             String userDateInput = br.readLine();
 
-            SimpleDateFormat dateFormatter = new SimpleDateFormat( DATE_FORMAT_NO_TIME );
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT_NO_TIME);
             Date date = dateFormatter.parse(userDateInput);
             searchDate = Calendar.getInstance();
             searchDate.setTime(date);
@@ -305,43 +442,6 @@ public class Main {
     }
 
     /**
-     * Prompts user for details of a future meeting and adds it.
-     */
-    private void addNewFutureMeeting() {
-        Calendar meetingDate = null;
-        Set<Contact> attendees = null;
-
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-            System.out.print("Enter date for future meeting (yyyy/MM/dd HH:mm:ss): ");
-            String userDateInput = br.readLine();
-
-            SimpleDateFormat dateFormatter = new SimpleDateFormat( DATE_FORMAT );
-            Date date = dateFormatter.parse(userDateInput);
-            meetingDate = Calendar.getInstance();
-            meetingDate.setTime(date);
-
-            System.out.print("Enter ID of attendees: ");
-            String contactIDs = br.readLine();
-            // TODO: Get comma separated list of contact IDs.
-            attendees = contactManagerImpl.getContacts(1, 2);
-
-            contactManagerImpl.addFutureMeeting(attendees, meetingDate);
-
-        } catch (ParseException e) {
-            System.out.println("Date format incorrect! New meeting action terminated.");
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            System.out.println("Date supplied or contact IDs are invalid.");
-            e.printStackTrace();
-        } catch (IOException e) {
-            System.out.println("Buffered input error!");
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Prompts user for details of a past meeting and adds it.
      */
     private void createRecordForPastMeeting() {
@@ -355,7 +455,7 @@ public class Main {
             System.out.print("Enter date of past meeting (yyyy/MM/dd HH:mm:ss): ");
             String userDateInput = br.readLine();
 
-            SimpleDateFormat dateFormatter = new SimpleDateFormat( DATE_FORMAT );
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
             Date date = dateFormatter.parse(userDateInput);
             meetingDate = Calendar.getInstance();
             meetingDate.setTime(date);
@@ -411,85 +511,6 @@ public class Main {
             e.printStackTrace();
         } catch (IOException e) {
             System.out.println("Buffered input error!");
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Prompts user for a name and note for a new contact and creates one.
-     */
-    private void addNewContact() {
-        String name = null;
-        String note = null;
-
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-            System.out.print("Enter name for new contact: ");
-            name = br.readLine();
-            System.out.print("Enter note for new contact: ");
-            note = br.readLine();
-
-            contactManagerImpl.addNewContact(name, note);
-
-        } catch (IOException e){
-            System.out.println("Buffered input error!");
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            System.out.println("Name or note where left null!");
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Prompts user for contact IDs and prints out those that are found.
-     */
-    private void listContactsForProvidedIDs() {
-        String idList;
-
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-            //TODO: Input ids as comma separated values.
-            System.out.print("Enter contact ID ");
-            idList = br.readLine();
-
-            Set<Contact> contactSet = contactManagerImpl.getContacts(1, 2);
-
-            // Print contacts list.
-            printContacts(contactSet);
-
-        } catch (IOException e){
-            System.out.println("Buffered input error!");
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            System.out.println("ID supplied is invalid!");
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Prompts user for a search string and prints out those contacts whose name contains the string.
-     */
-    private void listContactsHavingStringInName() {
-        String searchString = null;
-
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-            System.out.print("Enter search string for contacts:  ");
-            searchString = br.readLine();
-
-            Set<Contact> contactSet = contactManagerImpl.getContacts(searchString);
-
-            // Print contacts list.
-            printContacts(contactSet);
-
-        } catch (IOException e){
-            System.out.println("Buffered input error!");
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            System.out.println("Search string is null!");
             e.printStackTrace();
         }
     }
