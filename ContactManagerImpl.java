@@ -1,9 +1,15 @@
+import sun.tools.jstat.ParserException;
+
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.text.ParseException;
 
 public class ContactManagerImpl implements ContactManager {
-    // Delimiter for CSV file format.
+    public static final String DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";
+    // Delimiters for file format.
     public static final String DELIMITER = "&";
+    public static final String ATTENDEE_DELIMITER = "±";
 
     private List<Meeting> meetingList = null;
     private Set<Contact> contactSet = null;
@@ -14,8 +20,11 @@ public class ContactManagerImpl implements ContactManager {
         this.meetingList = new ArrayList<Meeting>();
         this.contactSet = new HashSet<Contact>();
 
-        // Load data if available.
-        loadContactsSetAsCSV();
+        // Load contacts.txt if available.
+        // TODO: Check if we should be doing this here or in our user-interface class.
+        // This is crucial. If markers JUnit test and assume ContactManagerImpl is blank at creation,
+        // then we should not load contacts.txt here.
+        loadDataAsCSV();
     }
 
     /**
@@ -409,7 +418,7 @@ public class ContactManagerImpl implements ContactManager {
      * This method must be executed when the program is closed and when/if the user requests it.
      */
     public void flush() {
-        saveContactsSetAsCSV();
+        saveDataAsCSV();
     }
 
 
@@ -537,18 +546,72 @@ public class ContactManagerImpl implements ContactManager {
     }
 
     /**
-     * Saves contacts to CSV text file.
+     * Saves contacts and meetings to CSV text file.
      */
-    private void saveContactsSetAsCSV() {
+    private void saveDataAsCSV() {
         File file = new File("contacts.txt");
         PrintWriter out = null;
         try {
             out = new PrintWriter(file);
+
+            // Save contacts.
             for (Contact contact : contactSet) {
                 String contactLine;
-                contactLine = contact.getId() + DELIMITER + contact.getName() + DELIMITER + contact.getNotes();
+                int tempID = contact.getId();
+                String tempName = contact.getName();
+                String tempNotes = contact.getNotes();
+
+                contactLine = "CONTACT" + DELIMITER + tempID + DELIMITER + tempName + DELIMITER + tempNotes;
                 out.println(contactLine);
             }
+
+            // Save meetings.
+            for (Meeting meeting : meetingList) {
+                String meetingLine;
+                if (meeting instanceof PastMeetingImpl) {
+                    // Past meetings.
+
+                    int tempID = meeting.getId();
+                    Calendar tempDate = meeting.getDate();
+                    String tempNotes = ((PastMeetingImpl) meeting).getNotes();
+                    String tempContacts= null;
+
+                    // Stringify date.
+                    SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
+                    String tempStringDate = dateFormatter.format(tempDate.getTime());
+
+                    // Create delimited list of attendees.
+                    for (Contact attendee : meeting.getContacts()) {
+                        tempContacts += attendee + ATTENDEE_DELIMITER;
+                    }
+                    // Trim last extraneous delimiting character.
+                    tempContacts = tempContacts.substring(0, tempContacts.length() - 1);
+
+                    meetingLine = "PASTMEETING" + DELIMITER + tempID + DELIMITER + tempStringDate + DELIMITER + tempNotes + DELIMITER + tempContacts;
+                } else {
+                    // Future Meetings.
+
+                    int tempID = meeting.getId();
+                    Calendar tempDate = meeting.getDate();
+                    String tempContacts = "";
+
+                    // Stringify date.
+                    SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
+                    String tempStringDate = dateFormatter.format(tempDate.getTime());
+
+                    // Create delimited list of attendees.
+                    for (Contact attendee : meeting.getContacts()) {
+                        tempContacts += attendee.getId() + ATTENDEE_DELIMITER;
+                    }
+                    // Trim last extraneous delimiting character.
+                    tempContacts = tempContacts.substring(0, tempContacts.length() - 1);
+
+                    meetingLine = "FUTUREMEETING" + DELIMITER + tempID + DELIMITER + tempStringDate + DELIMITER + tempContacts;
+                }
+
+                out.println(meetingLine);
+            }
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } finally {
@@ -559,9 +622,9 @@ public class ContactManagerImpl implements ContactManager {
     }
 
     /**
-     * Loads contacts from CSV text file.
+     * Loads contacts and meetings from CSV text file.
      */
-    private void loadContactsSetAsCSV() {
+    private void loadDataAsCSV() {
         File file = new File("contacts.txt");
         try {
             BufferedReader in = new BufferedReader(new FileReader(file));
@@ -569,22 +632,86 @@ public class ContactManagerImpl implements ContactManager {
 
             while ((line = in.readLine()) != null) {
                 // Split line using delimiter.
-                String[] tokens = line.split(DELIMITER);
-                if (tokens.length == 3) {
-                    // Get contact attributes.
-                    int tempID = Integer.parseInt(tokens[0]);
-                    String tempName = tokens[1];
-                    String tempNotes = tokens[2];
+                String [] tokens = line.split(DELIMITER);
 
-                    // Create contact object using loaded attributes.
-                    Contact recreatedContact = new ContactImpl(tempID, tempName, tempNotes);
-                    // Add contact to contact list.
-                    this.contactSet.add(recreatedContact);
+                // All data has at least 4 tokens.
+                if (tokens.length >= 4) {
+                    if (tokens[0].equals("CONTACT")){
+                        // Get contact attributes.
+                        int tempID = Integer.parseInt(tokens[1]);
+                        String tempName = tokens[2];
+                        String tempNotes = tokens[3];
+
+                        // Create contact object using loaded attributes.
+                        Contact recreatedContact = new ContactImpl(tempID, tempName, tempNotes);
+                        // Add contact to contact list.
+                        this.contactSet.add(recreatedContact);
+                    } else if (tokens[0].equals("PASTMEETING")) {
+                        // Get past meeting attributes.
+                        int meetingID = Integer.parseInt(tokens[1]);
+                        String tempStringDate = tokens[2];
+                        String tempNotes = tokens[3];
+                        String tempContacts = tokens[4];
+                        Calendar meetingDate = null;
+                        Set<Contact> tempContactsSet;
+
+                        try {
+                            // Reformat date into Calendar.
+                            SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
+                            Date date = dateFormatter.parse(tempStringDate);
+                            meetingDate = Calendar.getInstance();
+                            meetingDate.setTime(date);
+                        } catch (ParseException e) {
+                            System.out.println("Date format mangled.");
+                        }
+
+                        // Create contact set for meeting.
+                        tempContactsSet = new HashSet<Contact>();
+                        String [] contactTokens = tempContacts.split(ATTENDEE_DELIMITER);
+                        for (String contactID : contactTokens) {
+                            int tempID = Integer.parseInt(contactID);
+                            tempContactsSet.add(getContact(tempID));
+                        }
+
+                        // Recreate past meeting.
+                        PastMeeting recreatedPastMeeting = new PastMeetingImpl(meetingID, meetingDate, tempContactsSet, tempNotes);
+                        // Add meeting to meeting list.
+                        this.meetingList.add(recreatedPastMeeting);
+                    } else if (tokens[0].equals("FUTUREMEETING")) {
+                        // Get future meeting attributes.
+                        int meetingID = Integer.parseInt(tokens[1]);
+                        String tempStringDate = tokens[2];
+                        String tempContacts = tokens[3];
+                        Calendar meetingDate = null;
+                        Set<Contact> tempContactsSet;
+
+                        try {
+                            // Reformat date into Calendar.
+                            SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
+                            Date date = dateFormatter.parse(tempStringDate);
+                            meetingDate = Calendar.getInstance();
+                            meetingDate.setTime(date);
+                        } catch (ParseException e) {
+                            System.out.println("Date format mangled.");
+                        }
+
+                        // Create contact set for meeting.
+                        tempContactsSet = new HashSet<Contact>();
+                        String [] contactTokens = tempContacts.split(ATTENDEE_DELIMITER);
+                        for (String contactID : contactTokens) {
+                            int tempID = Integer.parseInt(contactID);
+                            tempContactsSet.add(getContact(tempID));
+                        }
+
+                        // Recreate future meeting.
+                        FutureMeeting recreatedFutureMeeting = new FutureMeetingImpl(meetingID, meetingDate, tempContactsSet);
+                        // Add meeting to meeting list.
+                        this.meetingList.add(recreatedFutureMeeting);
+                    }
                 }
             }
         } catch (FileNotFoundException e) {
-            System.out.println("contacts.txt file does not exist.");
-            e.printStackTrace();
+            System.out.println("contacts.txt file does not exist. All contacts and meeting data is empty.");
         } catch (IOException e) {
             e.printStackTrace();
         }
