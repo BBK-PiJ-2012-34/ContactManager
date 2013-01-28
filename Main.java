@@ -131,7 +131,6 @@ public class Main {
             case 'l':
                 listContactsHavingStringInName();
                 break;
-
             case 'm':
                 contactManagerImpl.flush();
                 break;
@@ -139,7 +138,6 @@ public class Main {
                 break;
             case 'q':
                 cleanup(); // No need for break. System will exit in cleanup().
-
             default:
                 System.out.println("Error! Unknown selection.");
                 break;

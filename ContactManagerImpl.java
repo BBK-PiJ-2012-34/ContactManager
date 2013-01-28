@@ -1,5 +1,3 @@
-import sun.tools.jstat.ParserException;
-
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -541,8 +539,42 @@ public class ContactManagerImpl implements ContactManager {
      */
     private List<Meeting> chronologicallySortMeetingList(List<Meeting> meetings) {
         List<Meeting> sortedList = new ArrayList<Meeting>();
-
+        //TODO: Do it!
         return sortedList;
+    }
+
+    /**
+     * Converts a Calendar as a string formatted as yyyy/MM/dd HH:mm:ss.
+     *
+     * @param calendar Calendar to convert.
+     * @return string object with date.
+     */
+    private String calendarToString(Calendar calendar) {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
+        String tempStringDate = dateFormatter.format(calendar.getTime());
+
+        return tempStringDate;
+    }
+
+    /**
+     * Converts a string in format yyyy/MM/dd HH:mm:ss to a Calendar.
+     *
+     * @param string Date as yyyy/MM/dd HH:mm:ss string.
+     * @return Calendar object.
+     */
+    private Calendar stringToCalendar(String string) {
+        Calendar calendar = null;
+        try {
+            // Reformat date into Calendar.
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
+            Date date = dateFormatter.parse(string);
+            calendar = Calendar.getInstance();
+            calendar.setTime(date);
+        } catch (ParseException e) {
+            System.out.println("Date format mangled.");
+        }
+
+        return calendar;
     }
 
     /**
@@ -577,8 +609,7 @@ public class ContactManagerImpl implements ContactManager {
                     String tempContacts= null;
 
                     // Stringify date.
-                    SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
-                    String tempStringDate = dateFormatter.format(tempDate.getTime());
+                    String tempStringDate = calendarToString(tempDate);
 
                     // Create delimited list of attendees.
                     for (Contact attendee : meeting.getContacts()) {
@@ -596,8 +627,7 @@ public class ContactManagerImpl implements ContactManager {
                     String tempContacts = "";
 
                     // Stringify date.
-                    SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
-                    String tempStringDate = dateFormatter.format(tempDate.getTime());
+                    String tempStringDate = calendarToString(tempDate);
 
                     // Create delimited list of attendees.
                     for (Contact attendee : meeting.getContacts()) {
@@ -652,18 +682,10 @@ public class ContactManagerImpl implements ContactManager {
                         String tempStringDate = tokens[2];
                         String tempNotes = tokens[3];
                         String tempContacts = tokens[4];
-                        Calendar meetingDate = null;
+                        Calendar meetingDate;
                         Set<Contact> tempContactsSet;
 
-                        try {
-                            // Reformat date into Calendar.
-                            SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
-                            Date date = dateFormatter.parse(tempStringDate);
-                            meetingDate = Calendar.getInstance();
-                            meetingDate.setTime(date);
-                        } catch (ParseException e) {
-                            System.out.println("Date format mangled.");
-                        }
+                        meetingDate = stringToCalendar(tempStringDate);
 
                         // Create contact set for meeting.
                         tempContactsSet = new HashSet<Contact>();
@@ -682,18 +704,10 @@ public class ContactManagerImpl implements ContactManager {
                         int meetingID = Integer.parseInt(tokens[1]);
                         String tempStringDate = tokens[2];
                         String tempContacts = tokens[3];
-                        Calendar meetingDate = null;
+                        Calendar meetingDate;
                         Set<Contact> tempContactsSet;
 
-                        try {
-                            // Reformat date into Calendar.
-                            SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
-                            Date date = dateFormatter.parse(tempStringDate);
-                            meetingDate = Calendar.getInstance();
-                            meetingDate.setTime(date);
-                        } catch (ParseException e) {
-                            System.out.println("Date format mangled.");
-                        }
+                        meetingDate = stringToCalendar(tempStringDate);
 
                         // Create contact set for meeting.
                         tempContactsSet = new HashSet<Contact>();
