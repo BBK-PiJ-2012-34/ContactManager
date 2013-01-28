@@ -74,7 +74,7 @@ public class ContactManagerImplTest {
         contactManagerImpl.addNewContact("John Crifton", "Super nice guy");
         contactManagerImpl.addNewContact("Jack Smith", "A superhero");
 
-        Set<Contact> contactSet = contactManagerImpl.getContacts(1, 2, 3);
+        Set<Contact> contactSet = contactManagerImpl.getContacts(1, 2);
 
         assertTrue(contactSet.size() == 2);
     }

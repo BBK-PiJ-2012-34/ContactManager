@@ -1,6 +1,3 @@
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
-import sun.tools.jstat.ParserException;
-
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -72,9 +69,9 @@ public class Main {
 
                 System.out.println("TEST GENERAL OPTIONS");
                 System.out.println("--------------------");
-                System.out.println("M. Save all data to disk");
+                System.out.println("M. *Save all data to disk");
                 System.out.println("N. Load all data from disk");
-                System.out.println("Q. Quit program");
+                System.out.println("Q. *Quit program");
 
                 choice = (char) System.in.read();
                 choice = Character.toLowerCase(choice);
@@ -255,7 +252,10 @@ public class Main {
             String userDateInput = br.readLine();
 
             SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
-            Date date = dateFormatter.parse(userDateInput);
+            Date date;
+            if (userDateInput != null) {
+                date = dateFormatter.parse(userDateInput);
+            }
             meetingDate = Calendar.getInstance();
             meetingDate.setTime(date);
 
@@ -394,7 +394,10 @@ public class Main {
             String userDateInput = br.readLine();
 
             SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT_NO_TIME);
-            Date date = dateFormatter.parse(userDateInput);
+            Date date;
+            if (userDateInput != null) {
+                date = dateFormatter.parse(userDateInput);
+            }
             searchDate = Calendar.getInstance();
             searchDate.setTime(date);
 
@@ -462,7 +465,10 @@ public class Main {
             String userDateInput = br.readLine();
 
             SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
-            Date date = dateFormatter.parse(userDateInput);
+            Date date;
+            if (userDateInput != null) {
+                date = dateFormatter.parse(userDateInput);
+            }
             meetingDate = Calendar.getInstance();
             meetingDate.setTime(date);
 

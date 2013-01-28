@@ -242,6 +242,10 @@ public class ContactManagerImpl implements ContactManager {
         // NOTE: This method as defined by the interface does NOT check for a date being in the FUTURE.
         // Therefore we can create with it a PAST MEETING THAT HAS A FUTURE DATE and NOT throw an exception.
 
+        if (contacts == null || date == null || text == null) {
+            throw new NullPointerException("Parameter(s) supplied is null.");
+        }
+
         if (contacts.isEmpty()) {
             throw new IllegalArgumentException("Contact list is empty.");
         }
@@ -251,10 +255,6 @@ public class ContactManagerImpl implements ContactManager {
             if (!allContactsExist(contact.getId())) {
                 throw new IllegalArgumentException("Contact ID supplied does not exist.");
             }
-        }
-
-        if (contacts == null || date == null || text == null) {
-            throw new NullPointerException("Parameter(s) supplied is null.");
         }
 
         // ID given to new past meeting is current meeting list size + 1.
@@ -540,6 +540,10 @@ public class ContactManagerImpl implements ContactManager {
     private List<Meeting> chronologicallySortMeetingList(List<Meeting> meetings) {
         List<Meeting> sortedList = new ArrayList<Meeting>();
         //TODO: Do it!
+
+
+
+
         return sortedList;
     }
 
@@ -656,8 +660,9 @@ public class ContactManagerImpl implements ContactManager {
      */
     private void loadDataAsCSV() {
         File file = new File("contacts.txt");
+        BufferedReader in = null;
         try {
-            BufferedReader in = new BufferedReader(new FileReader(file));
+            in = new BufferedReader(new FileReader(file));
             String line;
 
             while ((line = in.readLine()) != null) {
@@ -728,6 +733,14 @@ public class ContactManagerImpl implements ContactManager {
             System.out.println("contacts.txt file does not exist. All contacts and meeting data is empty.");
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
