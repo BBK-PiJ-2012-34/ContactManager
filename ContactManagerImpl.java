@@ -4,7 +4,9 @@ import java.util.*;
 import java.text.ParseException;
 
 public class ContactManagerImpl implements ContactManager {
+    public static final String DATA_FILE = "contacts.txt";
     public static final String DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";
+
     // Delimiters for file format.
     public static final String DELIMITER = "&";
     public static final String ATTENDEE_DELIMITER = "±";
@@ -585,7 +587,7 @@ public class ContactManagerImpl implements ContactManager {
      * Saves contacts and meetings to CSV text file.
      */
     private void saveDataAsCSV() {
-        File file = new File("contacts.txt");
+        File file = new File(DATA_FILE);
         PrintWriter out = null;
         try {
             out = new PrintWriter(file);
@@ -659,7 +661,7 @@ public class ContactManagerImpl implements ContactManager {
      * Loads contacts and meetings from CSV text file.
      */
     private void loadDataAsCSV() {
-        File file = new File("contacts.txt");
+        File file = new File(DATA_FILE);
         BufferedReader in = null;
         try {
             in = new BufferedReader(new FileReader(file));
