@@ -70,7 +70,6 @@ public class Main {
                 System.out.println("TEST GENERAL OPTIONS");
                 System.out.println("--------------------");
                 System.out.println("M. *Save all data to disk");
-                System.out.println("N. Load all data from disk");
                 System.out.println("Q. *Quit program");
 
                 choice = (char) System.in.read();
@@ -130,8 +129,6 @@ public class Main {
                 break;
             case 'm':
                 contactManagerImpl.flush();
-                break;
-            case 'n':
                 break;
             case 'q':
                 cleanup(); // No need for break. System will exit in cleanup().
@@ -252,7 +249,7 @@ public class Main {
             String userDateInput = br.readLine();
 
             SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
-            Date date;
+            Date date = null;
             if (userDateInput != null) {
                 date = dateFormatter.parse(userDateInput);
             }
@@ -394,7 +391,7 @@ public class Main {
             String userDateInput = br.readLine();
 
             SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT_NO_TIME);
-            Date date;
+            Date date = null;
             if (userDateInput != null) {
                 date = dateFormatter.parse(userDateInput);
             }
@@ -465,7 +462,7 @@ public class Main {
             String userDateInput = br.readLine();
 
             SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
-            Date date;
+            Date date = null;
             if (userDateInput != null) {
                 date = dateFormatter.parse(userDateInput);
             }
