@@ -26,28 +26,8 @@ public class ContactManagerImpl implements ContactManager {
     private Set<Contact> contactSet = null;
 
     /**
-     * Returns a unique integer that is not found in the provided int array.
-     *
-     * @param existingIntegers list of Integers.
-     * @return a unique int that is not found in the provided integers list.
-     */
-    private int createUniqueInteger(List<Integer> existingIntegers) {
-        Random randomNumberGenerator = new Random();
-
-        Integer newInt = Math.abs(randomNumberGenerator.nextInt());
-
-        // Make sure number is unique. If not, pseudo-randomize until we get a unique int.
-        while ( existingIntegers.contains(newInt) ) {
-            newInt = randomNumberGenerator.nextInt();
-        }
-
-        return newInt;
-    }
-
-    /**
      * Constructor
      * Note that it loads the data file if available.
-     *
      */
     public ContactManagerImpl() {
         // The List interface is implemented as ArrayList
@@ -618,6 +598,25 @@ public class ContactManagerImpl implements ContactManager {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Returns a unique integer that is not found in the provided int array.
+     *
+     * @param existingIntegers list of Integers.
+     * @return a unique int that is not found in the provided integers list.
+     */
+    private int createUniqueInteger(List<Integer> existingIntegers) {
+        Random randomNumberGenerator = new Random();
+
+        Integer newInt = Math.abs(randomNumberGenerator.nextInt());
+
+        // Make sure number is unique. If not, pseudo-randomize until we get a unique int.
+        while ( existingIntegers.contains(newInt) ) {
+            newInt = randomNumberGenerator.nextInt();
+        }
+
+        return newInt;
     }
 
     /**
