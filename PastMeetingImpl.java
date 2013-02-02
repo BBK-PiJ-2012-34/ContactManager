@@ -4,6 +4,14 @@ import java.util.Set;
 public class PastMeetingImpl extends MeetingImpl implements PastMeeting {
     private String notes = null;
 
+    /**
+     * Constructor
+     *
+     * @param id an ID for the meeting.
+     * @param date date of the meeting.
+     * @param contacts set of contacts for the meeting.
+     * @param text meeting notes text.
+     */
     public PastMeetingImpl(int id, Calendar date, Set<Contact> contacts, String text) {
         super(id, date, contacts);
         setNotes(text);

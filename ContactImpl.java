@@ -14,6 +14,7 @@ public class ContactImpl implements Contact {
     /**
      * Constructor
      *
+     * @param id ID of the contact.
      * @param name  the name of the contact.
      * @param notes notes to be added about the contact.
      */

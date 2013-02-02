@@ -6,6 +6,13 @@ public class MeetingImpl implements Meeting, Comparable<Meeting> {
     private Calendar date = null;
     private Set<Contact> contacts = null;
 
+    /**
+     * Constructor
+     *
+     * @param id an ID for the meeting.
+     * @param date date of the meeting.
+     * @param contacts set of contacts for the meeting.
+     */
     public MeetingImpl(int id, Calendar date, Set<Contact> contacts) {
         this.id = id;
         this.date = date;
