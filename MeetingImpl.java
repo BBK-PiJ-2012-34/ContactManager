@@ -1,7 +1,7 @@
 import java.util.Calendar;
 import java.util.Set;
 
-public class MeetingImpl implements Meeting, Comparable<MeetingImpl> {
+public class MeetingImpl implements Meeting, Comparable<Meeting> {
     private int id = 0;
     private Calendar date = null;
     private Set<Contact> contacts = null;
@@ -52,7 +52,7 @@ public class MeetingImpl implements Meeting, Comparable<MeetingImpl> {
      * @return a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
      */
     @Override
-    public int compareTo(MeetingImpl otherMeeting) {
+    public int compareTo(Meeting otherMeeting) {
         return this.date.compareTo(otherMeeting.getDate());
     }
 

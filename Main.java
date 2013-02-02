@@ -607,6 +607,7 @@ public class Main {
 
     private void cleanup() {
         //save data
+        contactManagerImpl.flush();
         System.out.println("Saving data to disk...");
         System.exit(0);
     }
