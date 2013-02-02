@@ -1,6 +1,11 @@
 import java.util.Calendar;
 import java.util.Set;
 
+/**
+ * A class to represent meetings.
+ *
+ * Meetings have unique IDs, scheduled date and a list of participating contacts.
+ */
 public class MeetingImpl implements Meeting, Comparable<Meeting> {
     private int id = 0;
     private Calendar date = null;

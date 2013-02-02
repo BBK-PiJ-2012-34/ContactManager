@@ -3,6 +3,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.text.ParseException;
 
+/**
+ * A class to manage your contacts and meetings.
+ */
 public class ContactManagerImpl implements ContactManager {
     public static final String DATA_FILE = "contacts.txt";
     public static final String DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";

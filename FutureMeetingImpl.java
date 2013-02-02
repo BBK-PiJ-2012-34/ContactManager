@@ -1,6 +1,9 @@
 import java.util.Calendar;
 import java.util.Set;
 
+/**
+ * A meeting to be held in the future.
+ */
 public class FutureMeetingImpl extends MeetingImpl implements FutureMeeting {
     /**
      * Constructor
