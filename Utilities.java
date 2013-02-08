@@ -3,15 +3,12 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: hisham
- * Date: 2/8/13
- * Time: 1:12 PM
- * To change this template use File | Settings | File Templates.
+ * A class that provides supporting date, time, number and collections methods.
  */
 public class Utilities {
     public static final String DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";
     public static final String DATE_FORMAT_NO_TIME = "yyyy/MM/dd";
+
     /**
      * Checks if provided date is in the future.
      *
@@ -66,17 +63,17 @@ public class Utilities {
     }
 
     /**
-     * Removes duplicates from meeting list.
+     * Removes duplicates from list.
      *
-     * @param meetings the meeting list to prune.
-     * @return meeting list with no duplicates.
+     * @param list the list to prune.
+     * @return list with no duplicates.
      */
-     public static <T> List<T> removeDuplicateMeetings(List<T> meetings) {
+     public static <T> List<T> removeDuplicateItemsInList(List<T> list) {
         // Convert to set and back to conveniently get rid off duplicates.
-        Set<T> meetingSet = new HashSet<T>(meetings);
-        List<T> prunedMeetingList = new ArrayList<T>(meetingSet);
+        Set<T> setFromList = new HashSet<T>(list);
+        List<T> prunedList = new ArrayList<T>(setFromList);
 
-        return prunedMeetingList;
+        return prunedList;
     }
 
     /**

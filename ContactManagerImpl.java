@@ -1,7 +1,5 @@
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.text.ParseException;
 
 /**
  * A class to manage your contacts and meetings.
@@ -191,7 +189,7 @@ public class ContactManagerImpl implements ContactManager {
             }
         }
 
-        meetingListForContact = Utilities.removeDuplicateMeetings(meetingListForContact);
+        meetingListForContact = Utilities.removeDuplicateItemsInList(meetingListForContact);
 
         // Chronological sort.
         // Need to rework into explicit MeetingImpl ArrayList since Collections.compareTo() is implemented
@@ -247,7 +245,7 @@ public class ContactManagerImpl implements ContactManager {
             }
         }
 
-        pastAndFutureMeetingsForDateList = Utilities.removeDuplicateMeetings(pastAndFutureMeetingsForDateList);
+        pastAndFutureMeetingsForDateList = Utilities.removeDuplicateItemsInList(pastAndFutureMeetingsForDateList);
 
         // Chronological sort.
         // Need to rework ArrayList into explicit MeetingImpl ArrayList since Collections.compareTo() is implemented
@@ -300,7 +298,7 @@ public class ContactManagerImpl implements ContactManager {
         }
 
         //TODO: fix this
-        pastMeetingsForContactList = Utilities.removeDuplicateMeetings(pastMeetingsForContactList);
+        pastMeetingsForContactList = Utilities.removeDuplicateItemsInList(pastMeetingsForContactList);
 
         // Chronological sort.
         // Need to rework ArrayList into explicit PastMeetingImpl ArrayList since Collections.compareTo() is implemented
