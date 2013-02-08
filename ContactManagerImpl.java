@@ -192,7 +192,7 @@ public class ContactManagerImpl implements ContactManager {
         meetingListForContact = Utilities.removeDuplicateItemsInList(meetingListForContact);
 
         // Chronological sort.
-        // Need to rework into explicit MeetingImpl ArrayList since Collections.compareTo() is implemented
+        // Here we make the ArrayList into explicit MeetingImpl ArrayList since Collections.compareTo() is implemented
         // in MeetingImpl and not part of the Meeting interface spec.
         // Create empty MeetingImpl ArrayList.
         List<MeetingImpl> sortedList = new ArrayList<MeetingImpl>();
@@ -248,7 +248,7 @@ public class ContactManagerImpl implements ContactManager {
         pastAndFutureMeetingsForDateList = Utilities.removeDuplicateItemsInList(pastAndFutureMeetingsForDateList);
 
         // Chronological sort.
-        // Need to rework ArrayList into explicit MeetingImpl ArrayList since Collections.compareTo() is implemented
+        // Here we make the ArrayList into explicit MeetingImpl ArrayList since Collections.compareTo() is implemented
         // in MeetingImpl and not part of the Meeting interface spec.
         // Create empty MeetingImpl ArrayList.
         List<MeetingImpl> sortedList = new ArrayList<MeetingImpl>();
@@ -297,11 +297,10 @@ public class ContactManagerImpl implements ContactManager {
             }
         }
 
-        //TODO: fix this
         pastMeetingsForContactList = Utilities.removeDuplicateItemsInList(pastMeetingsForContactList);
 
         // Chronological sort.
-        // Need to rework ArrayList into explicit PastMeetingImpl ArrayList since Collections.compareTo() is implemented
+        // Here we make the ArrayList into explicit PastMeetingImpl ArrayList since Collections.compareTo() is implemented
         // in MeetingImpl and not part of the Meeting interface spec.
         // Create empty MeetingImpl ArrayList.
         List<PastMeetingImpl> sortedList = new ArrayList<PastMeetingImpl>();
@@ -512,15 +511,12 @@ public class ContactManagerImpl implements ContactManager {
 
     /**
      * Save all data to disk.
-     * <p/>
+     *
      * This method must be executed when the program is closed and when/if the user requests it.
      */
     public void flush() {
         saveDataAsCSV();
     }
-
-
-    // Private utility methods start here.
 
     /**
      * Returns a single contact that corresponds to the ID.
@@ -569,8 +565,10 @@ public class ContactManagerImpl implements ContactManager {
 
     /**
      * Saves contacts and meetings to CSV text file.
+     *
+     * @return returns true if successful save, otherwise false.
      */
-    private void saveDataAsCSV() {
+    private boolean saveDataAsCSV() {
         File file = new File(DATA_FILE);
         PrintWriter out = null;
         try {
@@ -639,14 +637,18 @@ public class ContactManagerImpl implements ContactManager {
         } finally {
             if (out != null) {
                 out.close();
+                return true;
             }
+            return false;
         }
     }
 
     /**
      * Loads contacts and meetings from CSV text file.
+     *
+     * @return returns true if successful load, otherwise false.
      */
-    private void loadDataAsCSV() {
+    private boolean loadDataAsCSV() {
         File file = new File(DATA_FILE);
         BufferedReader in = null;
         try {
@@ -734,10 +736,12 @@ public class ContactManagerImpl implements ContactManager {
             if (in != null) {
                 try {
                     in.close();
+                    return true;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+            return false;
         }
     }
 }
