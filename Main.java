@@ -12,8 +12,6 @@ import java.util.*;
  * Hisham Khalifa (MSc Computer Science 2012 - 2013, Full-Time)
  */
 public class Main {
-    public static final String DATE_FORMAT = "yyyy/MM/dd HH:mm:ss";
-    public static final String DATE_FORMAT_NO_TIME = "yyyy/MM/dd";
 
     private ContactManager contactManagerImpl;
 
@@ -60,9 +58,11 @@ public class Main {
                 System.out.println("B. *Search for a past meeting using a meeting ID");
                 System.out.println("C. *Search for a future meeting using a meeting ID");
                 System.out.println("D. *Search for a meeting using a meeting ID");
+                System.out.println();
                 System.out.println("E. *List future meetings for a given contact");
                 System.out.println("F. *List past and future meetings for a given date");
                 System.out.println("G. *List past meetings for a given contact");
+                System.out.println();
                 System.out.println("H. *Create a record for a meeting that took place in the past");
                 System.out.println("I. *Add notes to a meeting");
                 System.out.println();
@@ -248,7 +248,7 @@ public class Main {
             System.out.print("Enter date for future meeting (yyyy/MM/dd HH:mm:ss): ");
             String userDateInput = br.readLine();
 
-            SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(Utilities.DATE_FORMAT);
             Date date = null;
             if (userDateInput != null) {
                 date = dateFormatter.parse(userDateInput);
@@ -390,7 +390,7 @@ public class Main {
             System.out.print("Enter date to list meetings on (yyyy/MM/dd): ");
             String userDateInput = br.readLine();
 
-            SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT_NO_TIME);
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(Utilities.DATE_FORMAT_NO_TIME);
             Date date = null;
             if (userDateInput != null) {
                 date = dateFormatter.parse(userDateInput);
@@ -461,7 +461,7 @@ public class Main {
             System.out.print("Enter date of past meeting (yyyy/MM/dd HH:mm:ss): ");
             String userDateInput = br.readLine();
 
-            SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(Utilities.DATE_FORMAT);
             Date date = null;
             if (userDateInput != null) {
                 date = dateFormatter.parse(userDateInput);
