@@ -2,6 +2,7 @@ import org.junit.*;
 
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -332,6 +333,7 @@ public class ContactManagerImplTest {
         FutureMeeting futureMeeting = null;
         futureMeeting = contactManager.getFutureMeeting(1380640586);
     }
+
     @Test
     public void testGetMeetingForMeetingIDThatDoesExist() throws Exception {
         Meeting meeting = null;
@@ -348,6 +350,29 @@ public class ContactManagerImplTest {
         org.junit.Assert.assertNull(meeting);
     }
 
+    @Test
+    public void testGetFutureMeetingListUsingContactThatDoesExist() throws Exception {
+        String name1 = "John Maloney";
+        String note1 = "Super good guy";
 
+        contactManager.addNewContact(name1, note1);
 
+        String name2 = "Hugo Smith";
+        String note2 = "Another super cool dude";
+
+        contactManager.addNewContact(name2, note2);
+
+        Set<Contact> contactSet = null;
+        int [] ids = {1,2};
+
+        contactSet = contactManager.getContacts(ids);
+
+        contactManager.addFutureMeeting(contactSet, someFutureDate);
+
+        List<Meeting> meetingList = null;
+
+        meetingList = contactManager.getFutureMeetingList(contactSet.iterator().next());
+
+        org.junit.Assert.assertFalse(meetingList.isEmpty());
+    }
 }
