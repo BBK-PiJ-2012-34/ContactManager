@@ -1,5 +1,7 @@
 import org.junit.*;
 
+import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -7,15 +9,27 @@ import java.util.Set;
  */
 public class ContactManagerImplTest {
     private ContactManager contactManager;
+    private Calendar someFutureDate;
+    private Calendar somePastDate;
 
     @Before
     public void setUp() throws Exception {
         contactManager = new ContactManagerImpl();
+
+        // Five months in the future.
+        someFutureDate = Calendar.getInstance();
+        someFutureDate.add(Calendar.MONTH, 5);
+
+        // Five months in the past.
+        somePastDate = Calendar.getInstance();
+        somePastDate.add(Calendar.MONTH, -5);
     }
 
     @After
     public void tearDown() throws Exception {
         contactManager = null;
+        someFutureDate = null;
+        somePastDate = null;
     }
 
     @Test
@@ -145,7 +159,129 @@ public class ContactManagerImplTest {
 
     @Test
     public void testAddFutureMeetingThatIsInFuture() throws Exception {
+        String name1 = "John Maloney";
+        String note1 = "Super good guy";
 
+        contactManager.addNewContact(name1, note1);
+
+        String name2 = "Hugo Smith";
+        String note2 = "Another super cool dude";
+
+        contactManager.addNewContact(name2, note2);
+
+        Set<Contact> contactSet = null;
+        int [] ids = {1,2};
+
+        contactSet = contactManager.getContacts(ids);
+
+        contactManager.addFutureMeeting(contactSet, someFutureDate);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddFutureMeetingThatIsNotInFuture() throws Exception {
+        String name1 = "John Maloney";
+        String note1 = "Super good guy";
+
+        contactManager.addNewContact(name1, note1);
+
+        String name2 = "Hugo Smith";
+        String note2 = "Another super cool dude";
+
+        contactManager.addNewContact(name2, note2);
+
+        Set<Contact> contactSet = null;
+        int [] ids = {1,2};
+
+        contactSet = contactManager.getContacts(ids);
+
+        contactManager.addFutureMeeting(contactSet, somePastDate);
+    }
+
+    @Test
+    public void testAddPastMeetingThatIsInThePast() throws Exception {
+        String name1 = "John Maloney";
+        String note1 = "Super good guy";
+
+        contactManager.addNewContact(name1, note1);
+
+        String name2 = "Hugo Smith";
+        String note2 = "Another super cool dude";
+
+        contactManager.addNewContact(name2, note2);
+
+        Set<Contact> contactSet = null;
+        int [] ids = {1,2};
+
+        contactSet = contactManager.getContacts(ids);
+
+        String note = "Everyone was civil.";
+
+        contactManager.addNewPastMeeting(contactSet, somePastDate, note);
+    }
+
+    @Test
+    public void testAddPastMeetingThatIsNotInThePast() throws Exception {
+        String name1 = "John Maloney";
+        String note1 = "Super good guy";
+
+        contactManager.addNewContact(name1, note1);
+
+        String name2 = "Hugo Smith";
+        String note2 = "Another super cool dude";
+
+        contactManager.addNewContact(name2, note2);
+
+        Set<Contact> contactSet = null;
+        int [] ids = {1,2};
+
+        contactSet = contactManager.getContacts(ids);
+
+        String note = "Everyone was civil.";
+
+        // NOTE: This method as defined by the interface does NOT check for a date being in the FUTURE.
+        // Therefore we can create with it a PAST MEETING THAT HAS A FUTURE DATE and NOT throw an exception.
+        contactManager.addNewPastMeeting(contactSet, someFutureDate, note);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testAddPastMeetingThatIsInThePastWithNullParameters() throws Exception {
+        String name1 = "John Maloney";
+        String note1 = "Super good guy";
+
+        contactManager.addNewContact(name1, note1);
+
+        String name2 = "Hugo Smith";
+        String note2 = "Another super cool dude";
+
+        contactManager.addNewContact(name2, note2);
+
+        Set<Contact> contactSet = null;
+        int [] ids = {1,2};
+
+        contactSet = contactManager.getContacts(ids);
+
+        String note = null;
+
+        contactManager.addNewPastMeeting(contactSet, somePastDate, note);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddPastMeetingThatIsInThePastWithEmptyContactsList() throws Exception {
+        String name1 = "John Maloney";
+        String note1 = "Super good guy";
+
+        contactManager.addNewContact(name1, note1);
+
+        String name2 = "Hugo Smith";
+        String note2 = "Another super cool dude";
+
+        contactManager.addNewContact(name2, note2);
+
+        Set<Contact> contactSet = new HashSet<Contact>();
+
+        String note = "Everyone was civil.";
+
+        contactManager.addNewPastMeeting(contactSet, somePastDate, note);
     }
 
     @Test
