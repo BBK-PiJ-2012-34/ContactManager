@@ -285,8 +285,82 @@ public class ContactManagerImplTest {
     }
 
     @Test
-    public void testGetPastMeeting() throws Exception {
+    public void testGetPastMeetingForMeetingIDThatDoesExist() throws Exception {
+        String name1 = "John Maloney";
+        String note1 = "Super good guy";
 
+        contactManager.addNewContact(name1, note1);
+
+        String name2 = "Hugo Smith";
+        String note2 = "Another super cool dude";
+
+        contactManager.addNewContact(name2, note2);
+
+        Set<Contact> contactSet = null;
+        int [] ids = {1,2};
+
+        contactSet = contactManager.getContacts(ids);
+
+        String note = "Everyone was civil.";
+
+        contactManager.addNewPastMeeting(contactSet, somePastDate, note);
+
+        PastMeeting pastMeeting = null;
+        pastMeeting = contactManager.getPastMeeting(2444);
+
+        org.junit.Assert.assertEquals(2444, pastMeeting.getId());
+    }
+
+    @Test
+    public void testGetPastMeetingForMeetingIDThatDoesNotExist() throws Exception {
+        String name1 = "John Maloney";
+        String note1 = "Super good guy";
+
+        contactManager.addNewContact(name1, note1);
+
+        String name2 = "Hugo Smith";
+        String note2 = "Another super cool dude";
+
+        contactManager.addNewContact(name2, note2);
+
+        Set<Contact> contactSet = null;
+        int [] ids = {1,2};
+
+        contactSet = contactManager.getContacts(ids);
+
+        String note = "Everyone was civil.";
+
+        contactManager.addNewPastMeeting(contactSet, somePastDate, note);
+
+        PastMeeting pastMeeting = null;
+        pastMeeting = contactManager.getPastMeeting(3265);
+
+        org.junit.Assert.assertNull(pastMeeting);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetPastMeetingForMeetingIDThatIsInTheFuture() throws Exception {
+        String name1 = "John Maloney";
+        String note1 = "Super good guy";
+
+        contactManager.addNewContact(name1, note1);
+
+        String name2 = "Hugo Smith";
+        String note2 = "Another super cool dude";
+
+        contactManager.addNewContact(name2, note2);
+
+        Set<Contact> contactSet = null;
+        int [] ids = {1,2};
+
+        contactSet = contactManager.getContacts(ids);
+
+        String note = "Everyone was civil.";
+
+        contactManager.addNewPastMeeting(contactSet, somePastDate, note);
+
+        PastMeeting pastMeeting = null;
+        pastMeeting = contactManager.getPastMeeting(422657491);
     }
 
     @Test

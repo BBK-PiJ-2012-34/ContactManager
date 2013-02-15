@@ -594,21 +594,21 @@ public class ContactManagerImpl implements ContactManager {
                     int tempID = meeting.getId();
                     Calendar tempDate = meeting.getDate();
                     String tempNotes = meeting.getNotes();
-                    String tempContacts = null;
+                    String tempContacts = "";
 
                     // Get string representation of date.
                     String tempStringDate = Utilities.calendarToString(tempDate);
 
                     // Create delimited list of attendees.
                     for (Contact attendee : meeting.getContacts()) {
-                        tempContacts += attendee + ATTENDEE_DELIMITER;
+                        tempContacts += attendee.getId() + ATTENDEE_DELIMITER;
                     }
                     // Trim last extraneous delimiting character.
                     tempContacts = tempContacts.substring(0, tempContacts.length() - 1);
 
                     meetingLine = "PASTMEETING" + DELIMITER + tempID + DELIMITER + tempStringDate + DELIMITER + tempNotes + DELIMITER + tempContacts;
 
-                    out.print(meetingLine);
+                    out.println(meetingLine);
             }
 
             // Save future meetings.
