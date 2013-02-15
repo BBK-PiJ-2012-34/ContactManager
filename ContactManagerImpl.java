@@ -11,6 +11,11 @@ public class ContactManagerImpl implements ContactManager {
     public static final String DELIMITER = "&";
     public static final String ATTENDEE_DELIMITER = "±";
 
+    // Note that since the definition of the interfaces does in no way define a method for creating meeting
+    // and contact IDs, the IDs in methods that create meetings are auto-generated using a random
+    // ID number generator Utilities.createUniqueInteger() and those that create contacts are simply made
+    // in a serial fashion based on their sequence of creation.
+
     // Meeting lists.
     private List<PastMeeting> pastMeetingList = null;
     private List<FutureMeeting> futureMeetingList = null;

@@ -5,12 +5,17 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * JUnit test class for ContactManageImpl
+ * JUnit test class for ContactManageImpl.
  */
 public class ContactManagerImplTest {
     private ContactManager contactManager;
     private Calendar someFutureDate;
     private Calendar somePastDate;
+
+    // Note that since the definition of the interfaces does in no way define a method for creating meeting
+    // IDs, the IDs in methods that create meetings are auto-generated using a random ID number generator defined as
+    // Utilities.createUniqueInteger().
+    // As such, the tests here dealing with meetings have IDs that relate to the provided sample contacts.txt.
 
     @Before
     public void setUp() throws Exception {
@@ -75,7 +80,7 @@ public class ContactManagerImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testGetContactsUsingIDThatDontExit() throws Exception {
+    public void testGetContactsUsingIDThatDoesNotExit() throws Exception {
         String name1 = "John Maloney";
         String note1 = "Super good guy";
 
@@ -120,7 +125,7 @@ public class ContactManagerImplTest {
     }
 
     @Test
-    public void testGetContactsUsingNameThatDontExist() throws Exception {
+    public void testGetContactsUsingNameThatDoesNotExist() throws Exception {
         String name1 = "John Maloney";
         String note1 = "Super good guy";
 
@@ -286,52 +291,14 @@ public class ContactManagerImplTest {
 
     @Test
     public void testGetPastMeetingForMeetingIDThatDoesExist() throws Exception {
-        String name1 = "John Maloney";
-        String note1 = "Super good guy";
-
-        contactManager.addNewContact(name1, note1);
-
-        String name2 = "Hugo Smith";
-        String note2 = "Another super cool dude";
-
-        contactManager.addNewContact(name2, note2);
-
-        Set<Contact> contactSet = null;
-        int [] ids = {1,2};
-
-        contactSet = contactManager.getContacts(ids);
-
-        String note = "Everyone was civil.";
-
-        contactManager.addNewPastMeeting(contactSet, somePastDate, note);
-
         PastMeeting pastMeeting = null;
-        pastMeeting = contactManager.getPastMeeting(2444);
+        pastMeeting = contactManager.getPastMeeting(1380640586);
 
-        org.junit.Assert.assertEquals(2444, pastMeeting.getId());
+        org.junit.Assert.assertEquals(1380640586, pastMeeting.getId());
     }
 
     @Test
     public void testGetPastMeetingForMeetingIDThatDoesNotExist() throws Exception {
-        String name1 = "John Maloney";
-        String note1 = "Super good guy";
-
-        contactManager.addNewContact(name1, note1);
-
-        String name2 = "Hugo Smith";
-        String note2 = "Another super cool dude";
-
-        contactManager.addNewContact(name2, note2);
-
-        Set<Contact> contactSet = null;
-        int [] ids = {1,2};
-
-        contactSet = contactManager.getContacts(ids);
-
-        String note = "Everyone was civil.";
-
-        contactManager.addNewPastMeeting(contactSet, somePastDate, note);
-
         PastMeeting pastMeeting = null;
         pastMeeting = contactManager.getPastMeeting(3265);
 
@@ -340,61 +307,47 @@ public class ContactManagerImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testGetPastMeetingForMeetingIDThatIsInTheFuture() throws Exception {
-        String name1 = "John Maloney";
-        String note1 = "Super good guy";
-
-        contactManager.addNewContact(name1, note1);
-
-        String name2 = "Hugo Smith";
-        String note2 = "Another super cool dude";
-
-        contactManager.addNewContact(name2, note2);
-
-        Set<Contact> contactSet = null;
-        int [] ids = {1,2};
-
-        contactSet = contactManager.getContacts(ids);
-
-        String note = "Everyone was civil.";
-
-        contactManager.addNewPastMeeting(contactSet, somePastDate, note);
-
         PastMeeting pastMeeting = null;
-        pastMeeting = contactManager.getPastMeeting(422657491);
+        pastMeeting = contactManager.getPastMeeting(1960765772);
     }
 
     @Test
-    public void testGetFutureMeeting() throws Exception {
+    public void testGetFutureMeetingForMeetingIDThatDoesExist() throws Exception {
+        FutureMeeting futureMeeting = null;
+        futureMeeting = contactManager.getFutureMeeting(1960765772);
 
+        org.junit.Assert.assertEquals(1960765772, futureMeeting.getId());
     }
 
     @Test
-    public void testGetMeeting() throws Exception {
+    public void testGetFutureMeetingForMeetingIDThatDoesNotExist() throws Exception {
+        FutureMeeting futureMeeting = null;
+        futureMeeting = contactManager.getFutureMeeting(00223);
 
+        org.junit.Assert.assertNull(futureMeeting);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetFutureMeetingForMeetingIDThatIsInThePast() throws Exception {
+        FutureMeeting futureMeeting = null;
+        futureMeeting = contactManager.getFutureMeeting(1380640586);
+    }
+    @Test
+    public void testGetMeetingForMeetingIDThatDoesExist() throws Exception {
+        Meeting meeting = null;
+        meeting = contactManager.getMeeting(1960765772);
+
+        org.junit.Assert.assertEquals(1960765772, meeting.getId());
     }
 
     @Test
-    public void testGetFutureMeetingList() throws Exception {
+    public void testGetMeetingForMeetingIDThatDoesNotExist() throws Exception {
+        Meeting meeting = null;
+        meeting = contactManager.getMeeting(00223);
 
+        org.junit.Assert.assertNull(meeting);
     }
 
-    @Test
-    public void testGetPastMeetingList() throws Exception {
 
-    }
 
-    @Test
-    public void testAddNewPastMeeting() throws Exception {
-
-    }
-
-    @Test
-    public void testAddMeetingNotes() throws Exception {
-
-    }
-
-    @Test
-    public void testFlush() throws Exception {
-
-    }
 }
