@@ -52,7 +52,7 @@ public class Main {
     private void mainRunLoop() throws IOException {
         char choice, ignore;
 
-        for (; ; ) {
+        for (;;) {
             do {
                 System.out.println("*************************");
                 System.out.println("*****CONTACT MANAGER*****");
@@ -99,7 +99,6 @@ public class Main {
             // Run selected choice.
             doSelectedChoice(choice);
         }
-
     }
 
     /**
@@ -574,8 +573,7 @@ public class Main {
         System.out.println("Future Meetings");
         System.out.println("---------------");
         for (Meeting meeting : meetingList) {
-            // TODO: Format date output.
-            System.out.print("ID: " + meeting.getId() + "   Date: " + meeting.getDate());
+            System.out.print("ID: " + meeting.getId() + "   Date: " + Utilities.calendarToString(meeting.getDate()));
             // Print notes in case it's a past meeting
             System.out.println();
         }
@@ -598,8 +596,7 @@ public class Main {
         System.out.println("Past Meetings");
         System.out.println("---------------");
         for (Meeting meeting : meetingList) {
-            // TODO: Format date output.
-            System.out.print("ID: " + meeting.getId() + "   Date: " + meeting.getDate());
+            System.out.print("ID: " + meeting.getId() + "   Date: " + Utilities.calendarToString(meeting.getDate()));
             // Print notes since it's a past meeting.
             System.out.println("    Notes: " + ((PastMeetingImpl) meeting).getNotes());
             System.out.println();
