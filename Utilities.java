@@ -3,6 +3,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
+ * Utilities
+ *
  * A class that provides supporting date, time, number and collections methods.
  */
 public class Utilities {
@@ -108,5 +110,28 @@ public class Utilities {
         }
 
         return calendar;
+    }
+
+    /**
+     * Cleans up String input from command line in "[num], [num]..." format for int varargs.
+     *
+     * @param string String to convert into int array.
+     * @return int array ready for use in a method that takes "int..." varargs.
+     */
+    public static int [] delimitedNumbersStringToIntArray(String string) {
+        // Cleanup any whitespace to prevent NumberFormatExceptios with Integer.parseInt().
+        string = string.replaceAll("\\s", "");
+
+        // Split it into string array based on "," as delimiter.
+        String idStringArray [] = string.split(",");
+
+        int idIntArray [] = new int[idStringArray.length];
+
+        for (int x = 0; x < idStringArray.length; x++) {
+            int temp = Integer.parseInt(idStringArray[x]);
+            idIntArray[x] = temp;
+        }
+
+        return idIntArray;
     }
 }

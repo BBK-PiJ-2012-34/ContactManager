@@ -6,21 +6,30 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Assignment 3 of Programming in Java - Birkbeck, University of London
- * Main class that manages and runs the contact manager application.
+ * Main class for Coursework Assignment 3 of Programming in Java - Birkbeck, University of London
  *
- * Hisham Khalifa (MSc Computer Science 2012 - 2013, Full-Time)
+ * Manages and runs the contact manager application.
+ *
+ * Hisham Khalifa (MSc Computer Science 2012 - 2013, Full-Time).
  */
 public class Main {
 
     private ContactManager contactManagerImpl;
 
+    /**
+     * Calls method launch.
+     *
+     * @param args not used / ignored.
+     */
     public static void main(String[] args) {
         Main mainRunLoopManager = new Main();
 
         mainRunLoopManager.launch();
     }
 
+    /**
+     * Instantiates an object of this class and calls its main run loop method.
+     */
     private void launch() {
         // Instantiate the ContactManager controller object.
         contactManagerImpl = new ContactManagerImpl();
@@ -35,6 +44,11 @@ public class Main {
         }
     }
 
+    /**
+     * Main run loop with textual menu display and selection prompt.
+     *
+     * @throws IOException if selection input is malformed.
+     */
     private void mainRunLoop() throws IOException {
         char choice, ignore;
 
@@ -75,7 +89,6 @@ public class Main {
                 choice = (char) System.in.read();
                 choice = Character.toLowerCase(choice);
 
-
                 // Eat up extraneous new line characters to avoid messing up input on some consoles.
                 do {
                     ignore = (char) System.in.read();
@@ -89,6 +102,11 @@ public class Main {
 
     }
 
+    /**
+     * Calls selected option method based on provided choice char.
+     *
+     * @param choice selection char.
+     */
     private void doSelectedChoice(char choice) {
         switch (choice) {
             case 'a':
@@ -185,11 +203,10 @@ public class Main {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-            //TODO: Input ids as comma separated values.
             System.out.print("Enter contact ID ");
             idList = br.readLine();
 
-            Set<Contact> contactSet = contactManagerImpl.getContacts(1, 2);
+            Set<Contact> contactSet = contactManagerImpl.getContacts(Utilities.delimitedNumbersStringToIntArray(idList));
 
             // Print contacts list.
             printContacts(contactSet);
@@ -258,8 +275,8 @@ public class Main {
 
             System.out.print("Enter ID of attendees: ");
             String contactIDs = br.readLine();
-            // TODO: Get comma separated list of contact IDs.
-            attendees = contactManagerImpl.getContacts(1, 2);
+
+            attendees = contactManagerImpl.getContacts(Utilities.delimitedNumbersStringToIntArray(contactIDs));
 
             contactManagerImpl.addFutureMeeting(attendees, meetingDate);
 
@@ -471,8 +488,8 @@ public class Main {
 
             System.out.print("Enter ID of attendees for past meeting: ");
             String contactIDs = br.readLine();
-            // TODO: Get comma separated list of contact IDs.
-            attendees = contactManagerImpl.getContacts(1, 2);
+
+            attendees = contactManagerImpl.getContacts(Utilities.delimitedNumbersStringToIntArray(contactIDs));
 
             System.out.print("Enter notes for past meeting: ");
             notes = br.readLine();
@@ -605,8 +622,10 @@ public class Main {
         }
     }
 
+    /**
+     * Method to flush and exit.
+     */
     private void cleanup() {
-        //save data
         contactManagerImpl.flush();
         System.out.println("Saving data to disk...");
         System.exit(0);

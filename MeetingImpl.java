@@ -2,7 +2,7 @@ import java.util.Calendar;
 import java.util.Set;
 
 /**
- * A class to represent meetings.
+ * MeetingImpl - Implements Meeting interface.
  *
  * Meetings have unique IDs, scheduled date and a list of participating contacts.
  */

@@ -2,6 +2,8 @@ import java.io.*;
 import java.util.*;
 
 /**
+ * ContactManagerImpl - Implements ContactManager interface.
+ *
  * A class to manage your contacts and meetings.
  */
 public class ContactManagerImpl implements ContactManager {

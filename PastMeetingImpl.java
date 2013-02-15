@@ -2,7 +2,7 @@ import java.util.Calendar;
 import java.util.Set;
 
 /**
- * A meeting that was held in the past.
+ * PastMeetingImpl - Implements PastMeeting interface.
  *
  * It includes your notes about what happened and what was agreed.
  */
@@ -29,6 +29,7 @@ public class PastMeetingImpl extends MeetingImpl implements PastMeeting {
      *
      * @return the notes from the meeting.
      */
+    @Override
     public String getNotes() {
         return notes;
     }
