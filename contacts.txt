@@ -1,0 +1,12 @@
+CONTACT&7&Chuck Peddle&Designer of the 6502 CPU.
+CONTACT&8&Steve Wozniak&Designer of the Apple I.
+CONTACT&2&Bowers Stephenson&Speaker designer.
+CONTACT&9&Al Battani&Astronomer
+CONTACT&6&Jonah Smith III&He's a Harvard grad.
+CONTACT&1&Hisham Khalifa&I made this.
+CONTACT&10&James T. Kirk&Starship captain.
+CONTACT&5&Thomas Edison&Made a better lightbulb.
+CONTACT&4&Nikola Tesla&Lone inventor.
+CONTACT&3&Mickey Mouse&Cartoon character.
+PASTMEETING&1380640586&2012/04/23 22:22:22&Good stuff. Very civil.&7±2±1
+FUTUREMEETING&1960765772&2013/04/22 22:22:22&7±1±5
